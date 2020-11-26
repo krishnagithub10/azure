@@ -1,0 +1,43 @@
+{
+	"name": "OE_Forecast_input_2_tabsexist",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OE_Forecast",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"inputdirds": {
+				"type": "string"
+			},
+			"inputfilenameds": {
+				"type": "string"
+			},
+			"inputsheetds": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": {
+				"value": "@dataset().inputsheetds",
+				"type": "Expression"
+			},
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().inputfilenameds",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().inputdirds",
+					"type": "Expression"
+				},
+				"container": "pkcontainer"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

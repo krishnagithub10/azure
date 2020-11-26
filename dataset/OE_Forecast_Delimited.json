@@ -1,0 +1,25 @@
+{
+	"name": "OE_Forecast_Delimited",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OE_Forecast",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "OE_FOrecast_input_adf.xlsx.txt",
+				"folderPath": "inputs",
+				"container": "pkcontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

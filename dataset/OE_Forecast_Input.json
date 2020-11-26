@@ -1,0 +1,536 @@
+{
+	"name": "OE_Forecast_Input",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OE_Forecast",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "CORE DATA",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "OE_FOrecast_input_adf.xlsx",
+				"folderPath": "inputs",
+				"container": "pkcontainer"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "SALE COUNTRY",
+				"type": "String"
+			},
+			{
+				"name": "VEH_SOURCE",
+				"type": "String"
+			},
+			{
+				"name": "IMPORT / DOMESTIC",
+				"type": "String"
+			},
+			{
+				"name": "Mnemonic Only",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Mnemonic - Vehicle/Country or MCODE",
+				"type": "String"
+			},
+			{
+				"name": "TCODE",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Sales Parent or GROUP",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Car/Truck or MACRO LEVEL SEGMENT",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Regional Sub-Segment or MODIFIED SEGMENT",
+				"type": "String"
+			},
+			{
+				"name": "Regional Segment  Concat or DRI SEGMENT",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Platform",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Brand",
+				"type": "String"
+			},
+			{
+				"name": "SOS Year or NALV MODEL NAME",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Nameplate or MODEL",
+				"type": "String"
+			},
+			{
+				"name": "TRIM",
+				"type": "String"
+			},
+			{
+				"name": "Electric",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Body Type or BODYSTYLE",
+				"type": "String"
+			},
+			{
+				"name": "DOORS",
+				"type": "String"
+			},
+			{
+				"name": "DRIVETYPE",
+				"type": "String"
+			},
+			{
+				"name": "LAST UPDATE",
+				"type": "String"
+			},
+			{
+				"name": "SERIES",
+				"type": "String"
+			},
+			{
+				"name": "TYPE_F",
+				"type": "String"
+			},
+			{
+				"name": "SECTION WIDTH",
+				"type": "String"
+			},
+			{
+				"name": "ASPECT RATIO",
+				"type": "String"
+			},
+			{
+				"name": "TYPE CONSTRUCTION",
+				"type": "String"
+			},
+			{
+				"name": "RIM DIAMETER",
+				"type": "String"
+			},
+			{
+				"name": "LOAD INDEX",
+				"type": "String"
+			},
+			{
+				"name": "SPEED SYMBOL",
+				"type": "String"
+			},
+			{
+				"name": "Previous Speed Symbol 0520",
+				"type": "String"
+			},
+			{
+				"name": "Speed Change Indicator\n1 = Same\n0 = Different",
+				"type": "String"
+			},
+			{
+				"name": "FRONT_SIZE",
+				"type": "String"
+			},
+			{
+				"name": "CORE_F_SIZE",
+				"type": "String"
+			},
+			{
+				"name": "CHECK INFO F TO B",
+				"type": "String"
+			},
+			{
+				"name": "TYPE_R",
+				"type": "String"
+			},
+			{
+				"name": "REAR SECTION WIDTH",
+				"type": "String"
+			},
+			{
+				"name": "REAR ASPECT RATIO",
+				"type": "String"
+			},
+			{
+				"name": "REAR TYPE CONSTRUCTION",
+				"type": "String"
+			},
+			{
+				"name": "REAR RIM DIAMETER",
+				"type": "String"
+			},
+			{
+				"name": "REAR LOAD INDEX",
+				"type": "String"
+			},
+			{
+				"name": "REAR SPEED SYMBOL",
+				"type": "String"
+			},
+			{
+				"name": "REAR_SIZE",
+				"type": "String"
+			},
+			{
+				"name": "CORE_R_SIZE",
+				"type": "String"
+			},
+			{
+				"name": "NEW SIZE AFTER 2015 / YEAR ADDED (FRT)",
+				"type": "String"
+			},
+			{
+				"name": "TIRE PARENT",
+				"type": "String"
+			},
+			{
+				"name": "TIRE_BRAND",
+				"type": "String"
+			},
+			{
+				"name": "TIRE_MODEL",
+				"type": "String"
+			},
+			{
+				"name": "Previous TIRE BRAND 0520",
+				"type": "String"
+			},
+			{
+				"name": "Previous TIRE MODEL 0520",
+				"type": "String"
+			},
+			{
+				"name": "Tire Change Indicator\n1 = Same\n0 = Different",
+				"type": "String"
+			},
+			{
+				"name": "Tire Category",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle App",
+				"type": "String"
+			},
+			{
+				"name": "Segment",
+				"type": "String"
+			},
+			{
+				"name": "Reporting Segment",
+				"type": "String"
+			},
+			{
+				"name": "Tire Designation",
+				"type": "String"
+			},
+			{
+				"name": "Core 4",
+				"type": "String"
+			},
+			{
+				"name": "AS / SUM / WIN / LRR  APPLIES TO OEM MARKETING",
+				"type": "String"
+			},
+			{
+				"name": "SIDEWALL",
+				"type": "String"
+			},
+			{
+				"name": "WHEEL TYPE",
+				"type": "String"
+			},
+			{
+				"name": "RUN_FLAT DETAIL  (INTERNAL TO TIRE)",
+				"type": "String"
+			},
+			{
+				"name": "PRES_MON",
+				"type": "String"
+			},
+			{
+				"name": "MON_SUPP",
+				"type": "String"
+			},
+			{
+				"name": "SPARE DETAIL  (EXTERNAL TO TIRE)",
+				"type": "String"
+			},
+			{
+				"name": "1998_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "1999_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2000_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2001_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2002_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2003_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2004_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2005_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2006_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2007_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2008_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2009_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2010_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2011_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2012_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2013_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2014_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2015_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2016_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2017_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2018_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2019_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2020_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2021_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2022_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2023_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2024_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "2025_VVOL",
+				"type": "String"
+			},
+			{
+				"name": "1998_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "1999_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2000_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2001_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2002_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2003_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2004_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2005_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2006_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2007_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2008_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2009_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2010_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2011_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2012_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2013_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2014_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2015_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2016_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2017_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2018_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2019_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2020_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2021_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2022_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2023_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2024_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "2025_TVOL",
+				"type": "String"
+			},
+			{
+				"name": "Updated Segment",
+				"type": "String"
+			},
+			{
+				"name": "Updated Bodytype",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Regional Segment",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Regional Price Class",
+				"type": "String"
+			},
+			{
+				"name": "Global Sales Segment",
+				"type": "String"
+			},
+			{
+				"name": "Global Sales Sub-segment",
+				"type": "String"
+			},
+			{
+				"name": "Global Sales Price Class",
+				"type": "String"
+			},
+			{
+				"name": "Vehicle Sales: Program",
+				"type": "String"
+			},
+			{
+				"name": "RUN_FLAT SIMPL",
+				"type": "String"
+			},
+			{
+				"name": "SPARE TIRE SIMPL",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

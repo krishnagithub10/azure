@@ -1,0 +1,12 @@
+{
+	"name": "pksqlserverdfLS",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "integrated security=False;data source=pksqldatabaseserver.database.windows.net;initial catalog=pksqldatabase;user id=pkadmin",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIlBST0tBUk1BMDkxMV81YzY5YWM3NS02NWNkLTQ5OTMtYTZhNi00M2JmN2MyOThiZjciDQp9"
+		}
+	}
+}
