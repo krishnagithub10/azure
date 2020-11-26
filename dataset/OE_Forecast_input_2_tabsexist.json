@@ -16,6 +16,9 @@
 				"type": "string"
 			}
 		},
+		"folder": {
+			"name": "Unncessary"
+		},
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {

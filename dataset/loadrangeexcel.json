@@ -1,0 +1,35 @@
+{
+	"name": "loadrangeexcel",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OE_Forecast",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "LoadRange",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Lookups for OE Forecast.xlsx",
+				"folderPath": "inputs",
+				"container": "pkcontainer"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "OE Tire Size",
+				"type": "String"
+			},
+			{
+				"name": "Load Range",
+				"type": "String"
+			},
+			{
+				"name": "Date updated",
+				"type": "String"
+			}
+		]
+	}
+}

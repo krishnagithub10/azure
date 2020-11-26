@@ -5,6 +5,9 @@
 			"referenceName": "pkblobstorageLS",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "Unncessary"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {

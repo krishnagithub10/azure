@@ -13,6 +13,9 @@
 				"type": "string"
 			}
 		},
+		"folder": {
+			"name": "Unncessary"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
