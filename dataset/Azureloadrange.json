@@ -1,0 +1,25 @@
+{
+	"name": "Azureloadrange",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "OE_Tire_Size",
+				"type": "varchar"
+			},
+			{
+				"name": "Load_Range",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "OE_Loadrange"
+		}
+	}
+}
