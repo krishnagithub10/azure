@@ -1,0 +1,25 @@
+{
+	"name": "Speed",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServer1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "Original_Speed_Rating",
+				"type": "varchar"
+			},
+			{
+				"name": "New_Speed_Rating",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "speed_rating"
+		}
+	}
+}
