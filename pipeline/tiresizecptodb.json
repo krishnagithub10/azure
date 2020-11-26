@@ -1,5 +1,5 @@
 {
-	"name": "sppedcopytodb",
+	"name": "tiresizecptodb",
 	"properties": {
 		"activities": [
 			{
@@ -31,24 +31,24 @@
 						"mappings": [
 							{
 								"source": {
-									"name": "Original Speed Rating ",
+									"name": "Original Size",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Original_Speed_Rating",
+									"name": "Original_Size",
 									"type": "String",
 									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
-									"name": "New Speed Rating",
+									"name": "Corrected Size",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "New_Speed_Rating",
+									"name": "Corrected_Size",
 									"type": "String",
 									"physicalType": "varchar"
 								}
@@ -63,13 +63,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "spped",
+						"referenceName": "tiresizecor",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureSqspeed",
+						"referenceName": "Azuresqlsizecor",
 						"type": "DatasetReference"
 					}
 				]
