@@ -1,0 +1,2070 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "Prokarma0911"
+		},
+		"eventtriggertry_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/sizecorrection')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SqlServer1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Unncessary"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "Original_Size",
+						"type": "varchar"
+					},
+					{
+						"name": "Corrected_Size",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "size_correction"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/spped')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OE_Forecast",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "SpeedRatingSubs",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Lookups for OE Forecast.xlsx",
+						"folderPath": "inputs",
+						"container": "pkcontainer"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "Original Size",
+						"type": "String"
+					},
+					{
+						"name": "Corrected Size",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tiresizecor')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OE_Forecast",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "SizeCorrections",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Lookups for OE Forecast.xlsx",
+						"folderPath": "inputs",
+						"container": "pkcontainer"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OE_Forecast_Test')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copyexceltocsv",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ""
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "SALE COUNTRY",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SALE COUNTRY",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "VEH_SOURCE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "VEH_SOURCE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "IMPORT / DOMESTIC",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "IMPORT / DOMESTIC",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Mnemonic Only",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Mnemonic Only",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Mnemonic - Vehicle/Country or MCODE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Mnemonic - Vehicle/Country or MCODE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TCODE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TCODE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Sales Parent or GROUP",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Sales Parent or GROUP",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Car/Truck or MACRO LEVEL SEGMENT",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Car/Truck or MACRO LEVEL SEGMENT",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Regional Sub-Segment or MODIFIED SEGMENT",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Regional Sub-Segment or MODIFIED SEGMENT",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Regional Segment  Concat or DRI SEGMENT",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Regional Segment  Concat or DRI SEGMENT",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Platform",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Platform",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Brand",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Brand",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SOS Year or NALV MODEL NAME",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SOS Year or NALV MODEL NAME",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Nameplate or MODEL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Nameplate or MODEL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TRIM",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TRIM",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Electric",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Electric",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Body Type or BODYSTYLE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Body Type or BODYSTYLE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "DOORS",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "DOORS",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "DRIVETYPE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "DRIVETYPE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LAST UPDATE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "LAST UPDATE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SERIES",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SERIES",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TYPE_F",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TYPE_F",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SECTION WIDTH",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SECTION WIDTH",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ASPECT RATIO",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ASPECT RATIO",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TYPE CONSTRUCTION",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TYPE CONSTRUCTION",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "RIM DIAMETER",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "RIM DIAMETER",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LOAD INDEX",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "LOAD INDEX",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SPEED SYMBOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SPEED SYMBOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Previous Speed Symbol 0520",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Previous Speed Symbol 0520",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "FRONT_SIZE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "FRONT_SIZE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CORE_F_SIZE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "CORE_F_SIZE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CHECK INFO F TO B",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "CHECK INFO F TO B",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TYPE_R",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TYPE_R",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "REAR SECTION WIDTH",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "REAR SECTION WIDTH",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "REAR ASPECT RATIO",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "REAR ASPECT RATIO",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "REAR TYPE CONSTRUCTION",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "REAR TYPE CONSTRUCTION",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "REAR RIM DIAMETER",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "REAR RIM DIAMETER",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "REAR LOAD INDEX",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "REAR LOAD INDEX",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "REAR SPEED SYMBOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "REAR SPEED SYMBOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "REAR_SIZE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "REAR_SIZE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CORE_R_SIZE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "CORE_R_SIZE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "NEW SIZE AFTER 2015 / YEAR ADDED (FRT)",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "NEW SIZE AFTER 2015 / YEAR ADDED (FRT)",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TIRE PARENT",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TIRE PARENT",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TIRE_BRAND",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TIRE_BRAND",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TIRE_MODEL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TIRE_MODEL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Previous TIRE BRAND 0520",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Previous TIRE BRAND 0520",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Previous TIRE MODEL 0520",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Previous TIRE MODEL 0520",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tire Category",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Tire Category",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle App",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle App",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Segment",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Segment",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Reporting Segment",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Reporting Segment",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tire Designation",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Tire Designation",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Core 4",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Core 4",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "AS / SUM / WIN / LRR  APPLIES TO OEM MARKETING",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AS / SUM / WIN / LRR  APPLIES TO OEM MARKETING",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SIDEWALL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SIDEWALL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "WHEEL TYPE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "WHEEL TYPE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "RUN_FLAT DETAIL  (INTERNAL TO TIRE)",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "RUN_FLAT DETAIL  (INTERNAL TO TIRE)",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PRES_MON",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "PRES_MON",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MON_SUPP",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "MON_SUPP",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SPARE DETAIL  (EXTERNAL TO TIRE)",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SPARE DETAIL  (EXTERNAL TO TIRE)",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "1998_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "1998_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "1999_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "1999_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2000_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2000_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2001_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2001_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2002_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2002_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2003_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2003_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2004_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2004_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2005_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2005_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2006_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2006_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2007_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2007_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2008_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2008_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2009_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2009_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2010_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2010_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2011_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2011_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2012_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2012_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2013_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2013_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2014_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2014_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2015_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2015_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2016_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2016_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2017_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2017_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2018_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2018_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2019_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2019_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2020_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2020_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2021_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2021_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2022_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2022_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2023_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2023_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2024_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2024_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2025_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2025_VVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "1998_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "1998_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "1999_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "1999_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2000_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2000_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2001_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2001_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2002_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2002_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2003_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2003_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2004_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2004_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2005_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2005_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2006_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2006_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2007_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2007_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2008_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2008_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2009_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2009_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2010_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2010_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2011_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2011_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2012_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2012_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2013_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2013_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2014_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2014_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2015_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2015_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2016_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2016_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2017_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2017_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2018_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2018_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2019_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2019_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2020_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2020_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2021_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2021_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2022_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2022_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2023_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2023_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2024_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2024_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "2025_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "2025_TVOL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Updated Segment",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Updated Segment",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Updated Bodytype",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Updated Bodytype",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Regional Segment",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Regional Segment",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Regional Price Class",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Regional Price Class",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Global Sales Segment",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Global Sales Segment",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Global Sales Sub-segment",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Global Sales Sub-segment",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Global Sales Price Class",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Global Sales Price Class",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vehicle Sales: Program",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vehicle Sales: Program",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "RUN_FLAT SIMPL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "RUN_FLAT SIMPL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SPARE TIRE SIMPL",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SPARE TIRE SIMPL",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": false,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "OE_Forecast_Input",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "OE_Forecast_Delimited",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": [],
+				"lastPublishTime": "2020-11-23T14:55:53Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/carsparsing')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "carscpss",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "inputs",
+									"wildcardFileName": {
+										"value": "concat(@pipeline().parameters.filename,'*.txt')",
+										"type": "Expression"
+									}
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "carsccsvinput",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "carsout",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-11-18T12:30:33Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/loadrangecptodb')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "OE Tire Size",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "OE_Tire_Size",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Load Range",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Load_Range",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "loadrangeexcel",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Azureloadrange",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sppedcopytodb')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Original Speed Rating ",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Original_Speed_Rating",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "New Speed Rating",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "New_Speed_Rating",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "spped",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSqspeed",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/spped')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tiresizecptodb')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Original Size",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Original_Size",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Corrected Size",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Corrected_Size",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "tiresizecor",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Azuresqlsizecor",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/tiresizecor')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/eventtriggertry')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "tiresizecptodb",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Lookups/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('eventtriggertry_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/tiresizecptodb')]"
+			]
+		}
+	]
+}

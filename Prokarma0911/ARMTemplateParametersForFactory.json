@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "Prokarma0911"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"value": ""
+		},
+		"OE_Forecast_connectionString": {
+			"value": ""
+		},
+		"SqlServer1_connectionString": {
+			"value": ""
+		},
+		"pkblobstorageLS_connectionString": {
+			"value": ""
+		},
+		"pksqlserverdfLS_connectionString": {
+			"value": ""
+		},
+		"eventtriggertry_properties_typeProperties_scope": {
+			"value": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		}
+	}
+}
