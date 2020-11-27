@@ -5,7 +5,10 @@
 		"factoryName": {
 			"value": "Prokarma0911"
 		},
-		"AzureSqlDatabase1_connectionString": {
+		"pksqlserverdfLS_connectionString": {
+			"value": ""
+		},
+		"pkblobstorageLS_connectionString": {
 			"value": ""
 		},
 		"OE_Forecast_connectionString": {
@@ -14,13 +17,13 @@
 		"SqlServer1_connectionString": {
 			"value": ""
 		},
-		"pkblobstorageLS_connectionString": {
-			"value": ""
-		},
-		"pksqlserverdfLS_connectionString": {
+		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
 		"eventtriggertry_properties_typeProperties_scope": {
+			"value": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"eventtrig2_properties_typeProperties_scope": {
 			"value": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
 		"containerUri": {

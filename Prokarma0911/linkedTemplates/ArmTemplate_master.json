@@ -7,9 +7,13 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "Prokarma0911"
 		},
-		"AzureSqlDatabase1_connectionString": {
+		"pksqlserverdfLS_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+			"metadata": "Secure string for 'connectionString' of 'pksqlserverdfLS'"
+		},
+		"pkblobstorageLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'pkblobstorageLS'"
 		},
 		"OE_Forecast_connectionString": {
 			"type": "secureString",
@@ -19,15 +23,15 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
 		},
-		"pkblobstorageLS_connectionString": {
+		"AzureSqlDatabase1_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'pkblobstorageLS'"
-		},
-		"pksqlserverdfLS_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'pksqlserverdfLS'"
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
 		"eventtriggertry_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"eventtrig2_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
@@ -58,8 +62,11 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"AzureSqlDatabase1_connectionString": {
-						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
+					"pksqlserverdfLS_connectionString": {
+						"value": "[parameters('pksqlserverdfLS_connectionString')]"
+					},
+					"pkblobstorageLS_connectionString": {
+						"value": "[parameters('pkblobstorageLS_connectionString')]"
 					},
 					"OE_Forecast_connectionString": {
 						"value": "[parameters('OE_Forecast_connectionString')]"
@@ -67,11 +74,8 @@
 					"SqlServer1_connectionString": {
 						"value": "[parameters('SqlServer1_connectionString')]"
 					},
-					"pkblobstorageLS_connectionString": {
-						"value": "[parameters('pkblobstorageLS_connectionString')]"
-					},
-					"pksqlserverdfLS_connectionString": {
-						"value": "[parameters('pksqlserverdfLS_connectionString')]"
+					"AzureSqlDatabase1_connectionString": {
+						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
 					}
 				}
 			},
@@ -93,6 +97,9 @@
 					},
 					"eventtriggertry_properties_typeProperties_scope": {
 						"value": "[parameters('eventtriggertry_properties_typeProperties_scope')]"
+					},
+					"eventtrig2_properties_typeProperties_scope": {
+						"value": "[parameters('eventtrig2_properties_typeProperties_scope')]"
 					}
 				}
 			},
