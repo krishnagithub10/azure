@@ -1,0 +1,24 @@
+{
+	"name": "eventtriggertry",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "tiresizecptodb",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Lookups/",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
