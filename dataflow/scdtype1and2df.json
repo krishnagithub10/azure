@@ -1,0 +1,31 @@
+{
+	"name": "scdtype1and2df",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "tiresizecorscdinput",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "sizecorr",
+						"type": "DatasetReference"
+					},
+					"name": "sizetable"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "Lookup1"
+				}
+			],
+			"script": "source(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size, Corrected_Size as lkp_Corrected_Size from \\ndbo.speed_rating_SCD',\n\tformat: 'query') ~> sizetable\nsource1, sizetable lookup({Original Size} == Original_Size,\n\tmultiple: true,\n\tbroadcast: 'auto')~> Lookup1"
+		}
+	}
+}

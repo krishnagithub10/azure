@@ -5,6 +5,9 @@
 			"referenceName": "OE_Forecast",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "SCD"
+		},
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {
