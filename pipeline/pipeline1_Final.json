@@ -4,6 +4,7 @@
 		"activities": [
 			{
 				"name": "dataflow1_OE_Forecast",
+				"description": "hi",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
