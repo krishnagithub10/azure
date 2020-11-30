@@ -1,0 +1,25 @@
+{
+	"name": "sizecorr",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Original_Size",
+				"type": "varchar"
+			},
+			{
+				"name": "Corrected_Size",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "size_correction"
+		}
+	}
+}

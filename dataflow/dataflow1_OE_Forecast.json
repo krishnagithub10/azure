@@ -13,21 +13,21 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "Azureloadrange",
+						"referenceName": "loadrange",
 						"type": "DatasetReference"
 					},
 					"name": "loadrange"
 				},
 				{
 					"dataset": {
-						"referenceName": "Azuresqlsizecor",
+						"referenceName": "sizecorr",
 						"type": "DatasetReference"
 					},
 					"name": "sizecor"
 				},
 				{
 					"dataset": {
-						"referenceName": "AzureSqspeed",
+						"referenceName": "speedcor",
 						"type": "DatasetReference"
 					},
 					"name": "speed"
