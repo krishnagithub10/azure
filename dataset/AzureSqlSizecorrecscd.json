@@ -9,7 +9,7 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "Sk_Speed",
+				"name": "Sk_tire_size",
 				"type": "int",
 				"precision": 10
 			},
@@ -31,7 +31,7 @@
 			},
 			{
 				"name": "update_date",
-				"type": "date"
+				"type": "timestamp"
 			}
 		],
 		"typeProperties": {
