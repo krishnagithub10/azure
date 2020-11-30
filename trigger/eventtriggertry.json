@@ -6,7 +6,7 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "tiresizecptodb",
+					"referenceName": "tiresizecptodbf",
 					"type": "PipelineReference"
 				}
 			}

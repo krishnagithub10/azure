@@ -1,5 +1,5 @@
 {
-	"name": "loadrangecptodb",
+	"name": "sppedcopytodbf",
 	"properties": {
 		"activities": [
 			{
@@ -31,24 +31,24 @@
 						"mappings": [
 							{
 								"source": {
-									"name": "OE Tire Size",
+									"name": "Original Speed Rating ",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "OE_Tire_Size",
+									"name": "Original_Speed_Rating",
 									"type": "String",
 									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
-									"name": "Load Range",
+									"name": "New Speed Rating",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Load_Range",
+									"name": "New_Speed_Rating",
 									"type": "String",
 									"physicalType": "varchar"
 								}
@@ -63,13 +63,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "loadrangeexcel",
+						"referenceName": "spped",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "Azureloadrange",
+						"referenceName": "AzureSqspeed",
 						"type": "DatasetReference"
 					}
 				]

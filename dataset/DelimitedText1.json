@@ -1,5 +1,5 @@
 {
-	"name": "OE_etl_output",
+	"name": "DelimitedText1",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "OE_Forecast",
