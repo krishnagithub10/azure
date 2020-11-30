@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "OE_ETL_Output.csv",
 				"folderPath": "outputs",
 				"container": "pkcontainer"
 			},
