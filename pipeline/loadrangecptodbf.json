@@ -23,7 +23,15 @@
 						}
 					},
 					"sink": {
-						"type": "AzureSqlSink"
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
 					},
 					"enableStaging": false,
 					"translator": {
@@ -69,7 +77,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "Azureloadrange",
+						"referenceName": "loadrangedel",
 						"type": "DatasetReference"
 					}
 				]
