@@ -19,7 +19,9 @@
 						"type": "ExcelSource",
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
-							"recursive": false
+							"recursive": false,
+							"wildcardFolderPath": "inputs/LKPP",
+							"wildcardFileName": "Loo*"
 						}
 					},
 					"sink": {
