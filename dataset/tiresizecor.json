@@ -8,11 +8,9 @@
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {
-			"sheetName": "SizeCorrections",
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "Lookups for OE Forecast.xlsx",
-				"folderPath": "inputs",
+				"folderPath": "inputs/LKP",
 				"container": "pkcontainer"
 			},
 			"firstRowAsHeader": true
