@@ -1,0 +1,31 @@
+{
+	"name": "tiresizecorscdinput",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OE_Forecast",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "SizeCorrections",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Lookups for OE Forecast.xlsx",
+				"folderPath": "inputs",
+				"container": "pkcontainer"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Original Size",
+				"type": "String"
+			},
+			{
+				"name": "Corrected Size",
+				"type": "String"
+			}
+		]
+	}
+}
