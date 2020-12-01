@@ -5,6 +5,14 @@
 			"referenceName": "OE_Forecast",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"foldernamedataset": {
+				"type": "string"
+			},
+			"filenamedataset": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "Cars"
 		},
@@ -13,6 +21,14 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().filenamedataset",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().foldernamedataset",
+					"type": "Expression"
+				},
 				"container": "pkcontainer"
 			},
 			"columnDelimiter": ",",
