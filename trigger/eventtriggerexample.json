@@ -8,6 +8,10 @@
 				"pipelineReference": {
 					"referenceName": "carspl",
 					"type": "PipelineReference"
+				},
+				"parameters": {
+					"foldernamepl": "inputs/Cars",
+					"filenamepl": "cars18112020.txt"
 				}
 			}
 		],
