@@ -1,16 +1,19 @@
 {
-	"name": "DelimitedText1",
+	"name": "Carsoutput",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "OE_Forecast",
 			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Cars"
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": "inputs/Cars",
+				"folderPath": "outputs/carsoutput/",
 				"container": "pkcontainer"
 			},
 			"columnDelimiter": ",",
