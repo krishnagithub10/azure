@@ -13,7 +13,16 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "folderpath",
+						"value": "@pipeline().parameters.foldernamepl"
+					},
+					{
+						"name": "filename",
+						"value": "@pipeline().parameters.filenamepl"
+					}
+				],
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "carsdf",
