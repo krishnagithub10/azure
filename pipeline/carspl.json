@@ -1,9 +1,9 @@
 {
-	"name": "cars",
+	"name": "carspl",
 	"properties": {
 		"activities": [
 			{
-				"name": "cars",
+				"name": "carsdf",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "cars",
+						"referenceName": "carsdf",
 						"type": "DataFlowReference"
 					},
 					"compute": {
@@ -27,6 +27,14 @@
 				}
 			}
 		],
+		"parameters": {
+			"foldernamepl": {
+				"type": "string"
+			},
+			"filenamepl": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
