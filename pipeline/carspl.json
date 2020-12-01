@@ -17,7 +17,17 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "carsdf",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"foldernamedf": {
+								"value": "@pipeline().parameters.foldernamepl",
+								"type": "Expression"
+							},
+							"filenamedf": {
+								"value": "@pipeline().parameters.filenamepl",
+								"type": "Expression"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
