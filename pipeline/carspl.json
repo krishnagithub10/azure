@@ -36,6 +36,18 @@
 								"value": "@pipeline().parameters.filenamepl",
 								"type": "Expression"
 							}
+						},
+						"datasetParameters": {
+							"source1": {
+								"foldernamedataset": {
+									"value": "pipeline().parameters.foldernamepl",
+									"type": "Expression"
+								},
+								"filenamedataset": {
+									"value": "@pipeline().parameters.filenamepl",
+									"type": "Expression"
+								}
+							}
 						}
 					},
 					"compute": {
