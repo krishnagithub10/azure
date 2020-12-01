@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "scdtype1and2df",
+				"name": "scdtype1and2df_stage1",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "scdtype1and2df",
+						"referenceName": "scdtype1and2df_stage1",
 						"type": "DataFlowReference",
 						"parameters": {
 							"p1": "1"
