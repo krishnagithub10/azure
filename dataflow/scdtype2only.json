@@ -1,0 +1,71 @@
+{
+	"name": "scdtype2only",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "tiresizecorscdinput",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlSizecorrecscd",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlSizecorrecscd",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlSizecorrecscd",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlSizecorrecscd",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Join1"
+				},
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "ConditionalSplit1"
+				},
+				{
+					"name": "DerivedColumn5"
+				},
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "AlterRow1"
+				},
+				{
+					"name": "AlterRow2"
+				}
+			],
+			"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,Corrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nJoin1 split(not(isNull({Original Size}))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size)))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(lkp_Corrected_Size))),\n\tdisjoint: true) ~> ConditionalSplit1@(Insert, Update)\nAlterRow2 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'N') ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nConditionalSplit1@Insert alterRow(insertIf(true())) ~> AlterRow1\nConditionalSplit1@Update alterRow(updateIf(true())) ~> AlterRow2\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
+		}
+	}
+}

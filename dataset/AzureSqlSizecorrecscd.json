@@ -1,0 +1,46 @@
+{
+	"name": "AzureSqlSizecorrecscd",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Sk_tire_size",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Original_Size",
+				"type": "varchar"
+			},
+			{
+				"name": "Corrected_Size",
+				"type": "varchar"
+			},
+			{
+				"name": "change_ind",
+				"type": "char"
+			},
+			{
+				"name": "create_date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "update_date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tire_size_SCD"
+		}
+	}
+}
