@@ -19,7 +19,9 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
-							"recursive": true
+							"recursive": true,
+							"wildcardFolderPath": "outputs/inputs2/",
+							"wildcardFileName": "*.parquet"
 						}
 					},
 					"sink": {
