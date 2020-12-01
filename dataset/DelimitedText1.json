@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": "outputs",
+				"folderPath": "inputs/Cars",
 				"container": "pkcontainer"
 			},
 			"columnDelimiter": ",",
