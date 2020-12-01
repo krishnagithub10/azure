@@ -10,8 +10,8 @@
 					"type": "PipelineReference"
 				},
 				"parameters": {
-					"foldernamepl": "inputs/Cars",
-					"filenamepl": "cars18112020.txt"
+					"foldernamepl": "@triggerBody().folderPath",
+					"filenamepl": "@triggerBody().fileName"
 				}
 			}
 		],
