@@ -15,6 +15,13 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"dataflow": {
+						"referenceName": "scdtype1and2df",
+						"type": "DataFlowReference",
+						"parameters": {
+							"p1": "1"
+						}
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
