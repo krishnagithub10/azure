@@ -17,7 +17,7 @@
 		],
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
-			"blobPathBeginsWith": "/pkcontainer/blobs/inputs /Cars",
+			"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars",
 			"ignoreEmptyBlobs": true,
 			"scope": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911",
 			"events": [
