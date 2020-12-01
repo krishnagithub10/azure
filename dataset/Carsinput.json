@@ -13,8 +13,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "cars18112020.txt",
-				"folderPath": "inputs/Cars",
 				"container": "pkcontainer"
 			},
 			"columnDelimiter": ",",
