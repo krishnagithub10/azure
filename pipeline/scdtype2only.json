@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "scdtype2only_copy1",
+				"name": "scdtype2only",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "scdtype2only_copy1",
+						"referenceName": "scdtype2only",
 						"type": "DataFlowReference",
 						"parameters": {
 							"p1": "1"
