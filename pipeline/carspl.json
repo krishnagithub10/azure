@@ -29,7 +29,7 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"foldernamedf": {
-								"value": "'@{substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-1))}'",
+								"value": "'@{substring(pipeline().parameters.foldernamepl,11,length(pipeline().parameters.foldernamepl))}'",
 								"type": "Expression"
 							},
 							"filenamedf": {
@@ -40,7 +40,7 @@
 						"datasetParameters": {
 							"source1": {
 								"foldernamedataset": {
-									"value": "@substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-1))",
+									"value": "@substring(pipeline().parameters.foldernamepl,11,length(pipeline().parameters.foldernamepl))",
 									"type": "Expression"
 								},
 								"filenamedataset": {
