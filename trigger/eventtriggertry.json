@@ -2,11 +2,17 @@
 	"name": "eventtriggertry",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"pipelines": [
 			{
 				"pipelineReference": {
 					"referenceName": "tiresizecptodbf",
+					"type": "PipelineReference"
+				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "carspl",
 					"type": "PipelineReference"
 				}
 			}
