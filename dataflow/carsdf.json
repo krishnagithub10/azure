@@ -22,7 +22,7 @@
 				}
 			],
 			"transformations": [],
-			"script": "parameters{\n\tfoldernamedf as string,\n\tfilenamedf as string\n}\nsource(output(\n\t\tMake as string,\n\t\tModel as string,\n\t\tType as string,\n\t\tOrigin as string,\n\t\tDriveTrain as string,\n\t\tLength as short\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tmoveFiles: [(concat($foldernamedf,'/', $filenamedf)),(concat('outputs/',substring($filenamedf, 1,add(instr($filenamedf, '.'),-1)),'_',toString(currentTimestamp()),'.txt')\r\n\r\n\r\n)]) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+			"script": "parameters{\n\tfoldernamedf as string,\n\tfilenamedf as string\n}\nsource(output(\n\t\tMake as string,\n\t\tModel as string,\n\t\tType as string,\n\t\tOrigin as string,\n\t\tDriveTrain as string,\n\t\tLength as short\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tmoveFiles: [(concat($foldernamedf,'/', $filenamedf)),(concat('outputs/',substring($filenamedf, 1,add(instr($filenamedf, '.'),-1)),'_',replace(toString(currentTimestamp()),'':''),'_','.txt')\r\n\r\n\r\n)]) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 		}
 	}
 }
