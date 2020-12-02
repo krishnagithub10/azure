@@ -5,10 +5,10 @@
 		"factoryName": {
 			"value": "Prokarma0911"
 		},
-		"pksqlserverdfLS_connectionString": {
+		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
-		"pkblobstorageLS_connectionString": {
+		"AzureSqlDatabase2_connectionString": {
 			"value": ""
 		},
 		"OE_Forecast_connectionString": {
@@ -17,13 +17,34 @@
 		"SqlServer1_connectionString": {
 			"value": ""
 		},
-		"AzureSqlDatabase1_connectionString": {
+		"pkblobstorageLS_connectionString": {
 			"value": ""
+		},
+		"pksqlserverdfLS_connectionString": {
+			"value": ""
+		},
+		"eventtrig2_properties_typeProperties_scope": {
+			"value": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
 		"eventtriggertry_properties_typeProperties_scope": {
 			"value": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
-		"eventtrig2_properties_typeProperties_scope": {
+		"trigger11_properties_typeProperties_scope": {
+			"value": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"eventtriggerexample_properties_typeProperties_scope": {
+			"value": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"trigger12_properties_typeProperties_scope": {
+			"value": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"trigger13_properties_carspl_parameters_foldernamepl": {
+			"value": "@triggerBody().folderPath"
+		},
+		"trigger13_properties_carspl_parameters_filenamepl": {
+			"value": "@triggerBody().fileName"
+		},
+		"trigger13_properties_typeProperties_scope": {
 			"value": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		}
 	}

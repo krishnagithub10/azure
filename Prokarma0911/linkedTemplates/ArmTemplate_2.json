@@ -1,0 +1,539 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "Prokarma0911"
+		},
+		"trigger11_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"eventtrig2_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"eventtriggertry_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"trigger12_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"trigger13_properties_carspl_parameters_foldernamepl": {
+			"type": "string",
+			"defaultValue": "@triggerBody().folderPath"
+		},
+		"trigger13_properties_carspl_parameters_filenamepl": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"trigger13_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype2only_copy1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "tiresizecorscdinput",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlSizecorrecscd",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlSizecorrecscd",
+								"type": "DatasetReference"
+							},
+							"name": "source3"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlSizecorrecscd",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "Parquet1",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Join1"
+						},
+						{
+							"name": "DerivedColumn1"
+						},
+						{
+							"name": "ConditionalSplit1"
+						},
+						{
+							"name": "DerivedColumn5"
+						},
+						{
+							"name": "Select1"
+						},
+						{
+							"name": "AlterRow1"
+						},
+						{
+							"name": "AlterRow2"
+						},
+						{
+							"name": "Select2"
+						}
+					],
+					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,Corrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nJoin1 split(not(isNull({Original Size}))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size)))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tdisjoint: true) ~> ConditionalSplit1@(Insert, Update)\nAlterRow2 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'N') ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nConditionalSplit1@Insert alterRow(insertIf(true())) ~> AlterRow1\nConditionalSplit1@Update alterRow(updateIf(true())) ~> AlterRow2\nDerivedColumn1 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tcreate_date,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2\nSelect2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['insertfile'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tcreate_date,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tpartitionBy('hash', 1)) ~> sink3"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/carspl')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "carsdf",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "folderpath",
+								"value": "@pipeline().parameters.foldernamepl"
+							},
+							{
+								"name": "filename",
+								"value": "@pipeline().parameters.filenamepl"
+							}
+						],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "carsdf",
+								"type": "DataFlowReference",
+								"parameters": {
+									"foldernamedf": {
+										"value": "'@{substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-11))\n\n}'",
+										"type": "Expression"
+									},
+									"filenamedf": {
+										"value": "'@{pipeline().parameters.filenamepl}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"source1": {
+										"foldernamedataset": {
+											"value": "@substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-11))\n",
+											"type": "Expression"
+										},
+										"filenamedataset": "@pipeline().parameters.filenamepl"
+									},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"parameters": {
+					"foldernamepl": {
+						"type": "string",
+						"defaultValue": "pkcontainer/inputs/Cars2"
+					},
+					"filenamepl": {
+						"type": "string",
+						"defaultValue": "cars18112020.txt"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1_Final')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "dataflow1_OE_Forecast",
+						"description": "hi",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1_OE_Forecast",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source11": {},
+									"loadrange": {},
+									"sizecor": {},
+									"speed": {},
+									"final": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype1-2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "scdtype1and2df",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "scdtype1and2df",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p1": "1"
+								},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"source3": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype2only')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "scdtype2only",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "scdtype2only",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p1": "1"
+								},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"source3": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger11')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "tiresizecptodbf",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/LKPP/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger11_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype2only_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "scdtype2only_copy1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "scdtype2only_copy1",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p1": "1"
+								},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"source3": {},
+									"sink2": {},
+									"sink3": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/scdtype2only_copy1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/eventtrig2')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/LKP/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('eventtrig2_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/eventtriggertry')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "tiresizecptodbf",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/LKP/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('eventtriggertry_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger12')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars2",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger12_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger13')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"foldernamepl": "[parameters('trigger13_properties_carspl_parameters_foldernamepl')]",
+							"filenamepl": "[parameters('trigger13_properties_carspl_parameters_filenamepl')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars2",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger13_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
+			]
+		}
+	]
+}

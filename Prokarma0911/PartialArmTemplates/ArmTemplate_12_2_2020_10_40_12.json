@@ -13,6 +13,841 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/carspl')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "carsdf",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "folderpath",
+								"value": "@pipeline().parameters.foldernamepl"
+							},
+							{
+								"name": "filename",
+								"value": "@pipeline().parameters.filenamepl"
+							}
+						],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "carsdf",
+								"type": "DataFlowReference",
+								"parameters": {
+									"foldernamedf": {
+										"value": "'@{substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-11))\n\n}'",
+										"type": "Expression"
+									},
+									"filenamedf": {
+										"value": "'@{pipeline().parameters.filenamepl}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"source1": {
+										"foldernamedataset": {
+											"value": "@substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-11))\n",
+											"type": "Expression"
+										},
+										"filenamedataset": "@pipeline().parameters.filenamepl"
+									}
+								}
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"parameters": {
+					"foldernamepl": {
+						"type": "string",
+						"defaultValue": "pkcontainer/inputs/Cars2"
+					},
+					"filenamepl": {
+						"type": "string",
+						"defaultValue": "cars18112020.txt"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/carsdf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/loadrangecptodbf')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "OE Tire Size",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "OE_Tire_Size",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Load Range",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Load_Range",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "loadrangeexcel",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "loadrangedel",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/loadrangedel')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "outputs/inputs2/",
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Parquet1",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSqlSizecorrecscd",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Parquet1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1_Final')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "dataflow1_OE_Forecast",
+						"description": "hi",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1_OE_Forecast",
+								"type": "DataFlowReference"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow1_OE_Forecast')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype1-2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "scdtype1and2df",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "scdtype1and2df",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p1": "1"
+								}
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/scdtype1and2df')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype2only')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "scdtype2only",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "scdtype2only",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p1": "1"
+								}
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/scdtype2only')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sppedcopytodbf')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Original Speed Rating ",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Original_Speed_Rating",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "New Speed Rating",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "New_Speed_Rating",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "spped",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "speeddeli",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/speeddeli')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tiresizecptodbf')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false,
+									"wildcardFolderPath": "inputs/LKPP/",
+									"wildcardFileName": "Loo*"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Original Size",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Original_Size",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Corrected Size",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Corrected_Size",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "tiresizecor",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tiresiecordeli",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/tiresizecor')]",
+				"[concat(variables('factoryId'), '/datasets/tiresiecordeli')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Avro1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OE_Forecast",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Avro",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "outputs/inputs2",
+						"container": "pkcontainer"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlSizecorrecscd')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Sk_tire_size",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Original_Size",
+						"type": "varchar"
+					},
+					{
+						"name": "Corrected_Size",
+						"type": "varchar"
+					},
+					{
+						"name": "change_ind",
+						"type": "char"
+					},
+					{
+						"name": "create_date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "update_date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "tire_size_SCD"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Carsinput')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OE_Forecast",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"foldernamedataset": {
+						"type": "string"
+					},
+					"filenamedataset": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Cars"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().filenamedataset",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().foldernamedataset",
+							"type": "Expression"
+						},
+						"container": "pkcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Make",
+						"type": "String"
+					},
+					{
+						"name": "Model",
+						"type": "String"
+					},
+					{
+						"name": "Type",
+						"type": "String"
+					},
+					{
+						"name": "Origin",
+						"type": "String"
+					},
+					{
+						"name": "DriveTrain",
+						"type": "String"
+					},
+					{
+						"name": "Length",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Carsoutput')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OE_Forecast",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Cars"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "outputs/carsoutput/",
+						"container": "pkcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OE_Forecast",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "inputs/Cars",
+						"container": "pkcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OE_etl_output')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OE_Forecast",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "outputs",
+						"container": "pkcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Parquet1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OE_Forecast",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "outputs/inputs2",
+						"container": "pkcontainer"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/loadrange')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "OE_Tire_Size",
+						"type": "varchar"
+					},
+					{
+						"name": "Load_Range",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "OE_Loadrange"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/loadrangedel')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OE_Forecast",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "outputs/inputs2",
+						"container": "pkcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/sizecorr')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -91,40 +926,6 @@
 					"quoteChar": "\""
 				},
 				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/spped')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "OE_Forecast",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Excel",
-				"typeProperties": {
-					"sheetName": "SpeedRatingSubs",
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "Lookups for OE Forecast.xlsx",
-						"folderPath": "inputs",
-						"container": "pkcontainer"
-					},
-					"firstRowAsHeader": true
-				},
-				"schema": [
-					{
-						"name": "Original Size",
-						"type": "String"
-					},
-					{
-						"name": "Corrected Size",
-						"type": "String"
-					}
-				]
 			},
 			"dependsOn": []
 		},
@@ -223,1933 +1024,97 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OE_Forecast_Test')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/eventtrig2')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
-					{
-						"name": "Copyexceltocsv",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ExcelSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": false
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ""
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "SALE COUNTRY",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SALE COUNTRY",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VEH_SOURCE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "VEH_SOURCE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "IMPORT / DOMESTIC",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "IMPORT / DOMESTIC",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Mnemonic Only",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Mnemonic Only",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Mnemonic - Vehicle/Country or MCODE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Mnemonic - Vehicle/Country or MCODE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "TCODE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "TCODE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Sales Parent or GROUP",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Sales Parent or GROUP",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Car/Truck or MACRO LEVEL SEGMENT",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Car/Truck or MACRO LEVEL SEGMENT",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Regional Sub-Segment or MODIFIED SEGMENT",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Regional Sub-Segment or MODIFIED SEGMENT",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Regional Segment  Concat or DRI SEGMENT",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Regional Segment  Concat or DRI SEGMENT",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Platform",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Platform",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Brand",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Brand",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SOS Year or NALV MODEL NAME",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SOS Year or NALV MODEL NAME",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Nameplate or MODEL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Nameplate or MODEL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "TRIM",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "TRIM",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Electric",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Electric",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Body Type or BODYSTYLE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Body Type or BODYSTYLE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "DOORS",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "DOORS",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "DRIVETYPE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "DRIVETYPE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "LAST UPDATE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "LAST UPDATE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SERIES",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SERIES",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "TYPE_F",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "TYPE_F",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SECTION WIDTH",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SECTION WIDTH",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ASPECT RATIO",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "ASPECT RATIO",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "TYPE CONSTRUCTION",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "TYPE CONSTRUCTION",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "RIM DIAMETER",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "RIM DIAMETER",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "LOAD INDEX",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "LOAD INDEX",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SPEED SYMBOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SPEED SYMBOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Previous Speed Symbol 0520",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Previous Speed Symbol 0520",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "FRONT_SIZE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "FRONT_SIZE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "CORE_F_SIZE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "CORE_F_SIZE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "CHECK INFO F TO B",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "CHECK INFO F TO B",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "TYPE_R",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "TYPE_R",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "REAR SECTION WIDTH",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "REAR SECTION WIDTH",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "REAR ASPECT RATIO",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "REAR ASPECT RATIO",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "REAR TYPE CONSTRUCTION",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "REAR TYPE CONSTRUCTION",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "REAR RIM DIAMETER",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "REAR RIM DIAMETER",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "REAR LOAD INDEX",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "REAR LOAD INDEX",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "REAR SPEED SYMBOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "REAR SPEED SYMBOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "REAR_SIZE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "REAR_SIZE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "CORE_R_SIZE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "CORE_R_SIZE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "NEW SIZE AFTER 2015 / YEAR ADDED (FRT)",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "NEW SIZE AFTER 2015 / YEAR ADDED (FRT)",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "TIRE PARENT",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "TIRE PARENT",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "TIRE_BRAND",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "TIRE_BRAND",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "TIRE_MODEL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "TIRE_MODEL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Previous TIRE BRAND 0520",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Previous TIRE BRAND 0520",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Previous TIRE MODEL 0520",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Previous TIRE MODEL 0520",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Tire Category",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Tire Category",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle App",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle App",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Segment",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Segment",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Reporting Segment",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Reporting Segment",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Tire Designation",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Tire Designation",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Core 4",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Core 4",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "AS / SUM / WIN / LRR  APPLIES TO OEM MARKETING",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "AS / SUM / WIN / LRR  APPLIES TO OEM MARKETING",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SIDEWALL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SIDEWALL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "WHEEL TYPE",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "WHEEL TYPE",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "RUN_FLAT DETAIL  (INTERNAL TO TIRE)",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "RUN_FLAT DETAIL  (INTERNAL TO TIRE)",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "PRES_MON",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "PRES_MON",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "MON_SUPP",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "MON_SUPP",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SPARE DETAIL  (EXTERNAL TO TIRE)",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SPARE DETAIL  (EXTERNAL TO TIRE)",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "1998_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "1998_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "1999_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "1999_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2000_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2000_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2001_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2001_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2002_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2002_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2003_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2003_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2004_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2004_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2005_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2005_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2006_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2006_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2007_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2007_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2008_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2008_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2009_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2009_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2010_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2010_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2011_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2011_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2012_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2012_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2013_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2013_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2014_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2014_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2015_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2015_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2016_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2016_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2017_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2017_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2018_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2018_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2019_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2019_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2020_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2020_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2021_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2021_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2022_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2022_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2023_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2023_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2024_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2024_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2025_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2025_VVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "1998_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "1998_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "1999_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "1999_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2000_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2000_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2001_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2001_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2002_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2002_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2003_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2003_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2004_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2004_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2005_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2005_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2006_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2006_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2007_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2007_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2008_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2008_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2009_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2009_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2010_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2010_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2011_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2011_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2012_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2012_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2013_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2013_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2014_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2014_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2015_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2015_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2016_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2016_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2017_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2017_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2018_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2018_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2019_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2019_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2020_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2020_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2021_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2021_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2022_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2022_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2023_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2023_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2024_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2024_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "2025_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "2025_TVOL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Updated Segment",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Updated Segment",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Updated Bodytype",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Updated Bodytype",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Regional Segment",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Regional Segment",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Regional Price Class",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Regional Price Class",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Global Sales Segment",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Global Sales Segment",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Global Sales Sub-segment",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Global Sales Sub-segment",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Global Sales Price Class",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Global Sales Price Class",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Vehicle Sales: Program",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Vehicle Sales: Program",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "RUN_FLAT SIMPL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "RUN_FLAT SIMPL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SPARE TIRE SIMPL",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SPARE TIRE SIMPL",
-											"type": "String",
-											"physicalType": "String"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": false,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "OE_Forecast_Input",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "OE_Forecast_Delimited",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
 				"annotations": [],
-				"lastPublishTime": "2020-11-23T14:55:53Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/loadrangecptodbf')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
+				"runtimeState": "Stopped",
+				"pipelines": [
 					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ExcelSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": false
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "OE Tire Size",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "OE_Tire_Size",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "Load Range",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Load_Range",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "loadrangeexcel",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "loadrangedel",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						}
 					}
 				],
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"wildcardFolderPath": "outputs/inputs2/",
-									"wildcardFileName": "*.parquet"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Parquet1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/sppedcopytodbf')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ExcelSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": false
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "Original Speed Rating ",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Original_Speed_Rating",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "New Speed Rating",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "New_Speed_Rating",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "spped",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "speeddeli",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"annotations": []
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/LKP/",
+					"ignoreEmptyBlobs": true,
+					"scope": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/spped')]",
-				"[concat(variables('factoryId'), '/datasets/speeddeli')]"
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/tiresizecptodbf')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/eventtriggertry')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
 					{
-						"name": "Copy data",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ExcelSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": false,
-									"wildcardFolderPath": "inputs/LKPP/",
-									"wildcardFileName": "Loo*"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "Original Size",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Original_Size",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "Corrected Size",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Corrected_Size",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "tiresizecor",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "tiresiecordeli",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"pipelineReference": {
+							"referenceName": "tiresizecptodbf",
+							"type": "PipelineReference"
+						}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						}
 					}
 				],
-				"annotations": []
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/LKP/",
+					"ignoreEmptyBlobs": true,
+					"scope": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecor')]",
-				"[concat(variables('factoryId'), '/datasets/tiresiecordeli')]"
+				"[concat(variables('factoryId'), '/pipelines/tiresizecptodbf')]",
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger11')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "tiresizecptodbf",
+							"type": "PipelineReference"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/LKPP/",
+					"ignoreEmptyBlobs": true,
+					"scope": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/tiresizecptodbf')]"
 			]
 		},
 		{
@@ -2181,7 +1146,10 @@
 					"script": "parameters{\n\tfoldernamedf as string,\n\tfilenamedf as string\n}\nsource(output(\n\t\tMake as string,\n\t\tModel as string,\n\t\tType as string,\n\t\tOrigin as string,\n\t\tDriveTrain as string,\n\t\tLength as short\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tmoveFiles: [(concat($foldernamedf,'/', $filenamedf)),(concat('outputs/',substring($filenamedf, 1,add(instr($filenamedf, '.'),-1)),'_',replace(replace(replace(toString(currentTimestamp()),':','_'),' ','_'),'-','_'),'_','.txt')\r\n\r\n\r\n)]) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Carsinput')]",
+				"[concat(variables('factoryId'), '/datasets/Carsoutput')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/dataflow1_OE_Forecast')]",
@@ -2313,8 +1281,10 @@
 				}
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/loadrange')]",
 				"[concat(variables('factoryId'), '/datasets/sizecorr')]",
-				"[concat(variables('factoryId'), '/datasets/speedcor')]"
+				"[concat(variables('factoryId'), '/datasets/speedcor')]",
+				"[concat(variables('factoryId'), '/datasets/OE_etl_output')]"
 			]
 		},
 		{
@@ -2346,7 +1316,10 @@
 					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> source1\nsource1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1"
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Parquet1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/scdtype1and2df')]",
@@ -2418,7 +1391,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]"
+				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
 			]
 		},
 		{
@@ -2494,7 +1468,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]"
+				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
 			]
 		},
 		{
@@ -2570,7 +1545,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]"
+				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
 			]
 		},
 		{
@@ -2634,7 +1610,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]"
+				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
 			]
 		},
 		{
@@ -2710,7 +1687,211 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]"
+				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype2only_copy1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "tiresizecorscdinput",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlSizecorrecscd",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlSizecorrecscd",
+								"type": "DatasetReference"
+							},
+							"name": "source3"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlSizecorrecscd",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "Parquet1",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Join1"
+						},
+						{
+							"name": "DerivedColumn1"
+						},
+						{
+							"name": "ConditionalSplit1"
+						},
+						{
+							"name": "DerivedColumn5"
+						},
+						{
+							"name": "Select1"
+						},
+						{
+							"name": "AlterRow1"
+						},
+						{
+							"name": "AlterRow2"
+						},
+						{
+							"name": "Select2"
+						}
+					],
+					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,Corrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nJoin1 split(not(isNull({Original Size}))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size)))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tdisjoint: true) ~> ConditionalSplit1@(Insert, Update)\nAlterRow2 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'N') ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nConditionalSplit1@Insert alterRow(insertIf(true())) ~> AlterRow1\nConditionalSplit1@Update alterRow(updateIf(true())) ~> AlterRow2\nDerivedColumn1 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tcreate_date,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2\nSelect2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['insertfile'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tcreate_date,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tpartitionBy('hash', 1)) ~> sink3"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]",
+				"[concat(variables('factoryId'), '/datasets/Parquet1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/eventtriggerexample')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars",
+					"ignoreEmptyBlobs": true,
+					"scope": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype2only_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "scdtype2only_copy1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "scdtype2only_copy1",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p1": "1"
+								}
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/scdtype2only_copy1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger12')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars2",
+					"ignoreEmptyBlobs": true,
+					"scope": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger13')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"foldernamepl": "@triggerBody().folderPath",
+							"filenamepl": "@triggerBody().fileName"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars2",
+					"ignoreEmptyBlobs": true,
+					"scope": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
 			]
 		}
 	]

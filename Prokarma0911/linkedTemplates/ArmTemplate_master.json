@@ -7,13 +7,13 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "Prokarma0911"
 		},
-		"pksqlserverdfLS_connectionString": {
+		"AzureSqlDatabase1_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'pksqlserverdfLS'"
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
-		"pkblobstorageLS_connectionString": {
+		"AzureSqlDatabase2_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'pkblobstorageLS'"
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase2'"
 		},
 		"OE_Forecast_connectionString": {
 			"type": "secureString",
@@ -23,15 +23,43 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
 		},
-		"AzureSqlDatabase1_connectionString": {
+		"pkblobstorageLS_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+			"metadata": "Secure string for 'connectionString' of 'pkblobstorageLS'"
+		},
+		"pksqlserverdfLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'pksqlserverdfLS'"
+		},
+		"eventtrig2_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
 		"eventtriggertry_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
-		"eventtrig2_properties_typeProperties_scope": {
+		"trigger11_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"eventtriggerexample_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"trigger12_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"trigger13_properties_carspl_parameters_foldernamepl": {
+			"type": "string",
+			"defaultValue": "@triggerBody().folderPath"
+		},
+		"trigger13_properties_carspl_parameters_filenamepl": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"trigger13_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
@@ -62,11 +90,11 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"pksqlserverdfLS_connectionString": {
-						"value": "[parameters('pksqlserverdfLS_connectionString')]"
+					"AzureSqlDatabase1_connectionString": {
+						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
 					},
-					"pkblobstorageLS_connectionString": {
-						"value": "[parameters('pkblobstorageLS_connectionString')]"
+					"AzureSqlDatabase2_connectionString": {
+						"value": "[parameters('AzureSqlDatabase2_connectionString')]"
 					},
 					"OE_Forecast_connectionString": {
 						"value": "[parameters('OE_Forecast_connectionString')]"
@@ -74,8 +102,14 @@
 					"SqlServer1_connectionString": {
 						"value": "[parameters('SqlServer1_connectionString')]"
 					},
-					"AzureSqlDatabase1_connectionString": {
-						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
+					"pkblobstorageLS_connectionString": {
+						"value": "[parameters('pkblobstorageLS_connectionString')]"
+					},
+					"pksqlserverdfLS_connectionString": {
+						"value": "[parameters('pksqlserverdfLS_connectionString')]"
+					},
+					"eventtriggerexample_properties_typeProperties_scope": {
+						"value": "[parameters('eventtriggerexample_properties_typeProperties_scope')]"
 					}
 				}
 			},
@@ -94,17 +128,52 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"eventtriggertry_properties_typeProperties_scope": {
-						"value": "[parameters('eventtriggertry_properties_typeProperties_scope')]"
-					},
-					"eventtrig2_properties_typeProperties_scope": {
-						"value": "[parameters('eventtrig2_properties_typeProperties_scope')]"
 					}
 				}
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'Prokarma0911_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "Prokarma0911_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"trigger11_properties_typeProperties_scope": {
+						"value": "[parameters('trigger11_properties_typeProperties_scope')]"
+					},
+					"eventtrig2_properties_typeProperties_scope": {
+						"value": "[parameters('eventtrig2_properties_typeProperties_scope')]"
+					},
+					"eventtriggertry_properties_typeProperties_scope": {
+						"value": "[parameters('eventtriggertry_properties_typeProperties_scope')]"
+					},
+					"trigger12_properties_typeProperties_scope": {
+						"value": "[parameters('trigger12_properties_typeProperties_scope')]"
+					},
+					"trigger13_properties_carspl_parameters_foldernamepl": {
+						"value": "[parameters('trigger13_properties_carspl_parameters_foldernamepl')]"
+					},
+					"trigger13_properties_carspl_parameters_filenamepl": {
+						"value": "[parameters('trigger13_properties_carspl_parameters_filenamepl')]"
+					},
+					"trigger13_properties_typeProperties_scope": {
+						"value": "[parameters('trigger13_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'Prokarma0911_ArmTemplate_1')]"
 			]
 		}
 	]
