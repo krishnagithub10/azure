@@ -57,10 +57,12 @@
 		],
 		"parameters": {
 			"foldernamepl": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "pkcontainer/inputs/Cars2"
 			},
 			"filenamepl": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "cars18112020.txt"
 			}
 		},
 		"annotations": []
