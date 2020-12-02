@@ -1827,70 +1827,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"wildcardFolderPath": "outputs/inputs2/",
-									"wildcardFileName": "*.parquet"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Parquet1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Parquet1')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/pipeline1_Final')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1965,7 +1901,6 @@
 								"datasetParameters": {
 									"source1": {},
 									"source2": {},
-									"source3": {},
 									"sink1": {},
 									"sink2": {}
 								}
@@ -2013,7 +1948,6 @@
 								"datasetParameters": {
 									"source1": {},
 									"source2": {},
-									"source3": {},
 									"sink1": {},
 									"sink2": {}
 								}
@@ -2225,30 +2159,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/tiresizecor')]",
 				"[concat(variables('factoryId'), '/datasets/tiresiecordeli')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Avro1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "OE_Forecast",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Avro",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "outputs/inputs2",
-						"container": "pkcontainer"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/OE_Forecast')]"
 			]
 		},
 		{
@@ -3030,31 +2940,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Parquet1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "OE_Forecast",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "outputs/inputs2",
-						"container": "pkcontainer"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/OE_Forecast')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/loadrange')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3734,40 +3619,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/insertdf')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "Parquet1",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> source1\nsource1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Parquet1')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/scdtype1and2df')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -3788,13 +3639,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
 						}
 					],
 					"sinks": [
@@ -3833,226 +3677,7 @@
 							"name": "Select1"
 						}
 					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,\\nCorrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nJoin1 alterRow(insertIf(not(isNull({Original Size}))&&isNull(lkp_Original_Size)),\n\tupdateIf(not(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim({lkp_Original_Size})))&&ltrim(rtrim(trim({Corrected Size})))!=ltrim(rtrim(trim(coalesce(lkp_Corrected_Size,'0')))))) ~> AlterRow1\nConditionalSplit1@Insert derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nAlterRow1 split(not(isNull({Original Size}))&&(isNull(lkp_Original_Size)),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size))),\n\tdisjoint: false) ~> ConditionalSplit1@(Insert, Update, Other)\nConditionalSplit1@Update derive(update_date = currentTimestamp()) ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tCorrected_Size = {Corrected Size},\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scdtype1and2df_copy1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "tiresizecorscdinput",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink2"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Join1"
-						},
-						{
-							"name": "AlterRow1"
-						},
-						{
-							"name": "DerivedColumn1"
-						},
-						{
-							"name": "DerivedColumn2"
-						},
-						{
-							"name": "SurrogateKey1"
-						},
-						{
-							"name": "DerivedColumn4"
-						},
-						{
-							"name": "Lookup1"
-						}
-					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nLookup1 alterRow(upsertIf(not(isNull({Original Size}))&&not(isNull(Original_Size)))) ~> AlterRow1\nSurrogateKey1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y',\n\t\tSk_tire_size = Sk_tire_size+max_sk) ~> DerivedColumn1\nAlterRow1 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn2\nAlterRow1 keyGenerate(output(Sk_tire_size as long),\n\tstartAt: 1L) ~> SurrogateKey1\nJoin1 derive(join_cond = 1) ~> DerivedColumn4\nDerivedColumn4, source3 lookup(join_cond == join_key,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup1\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tSk_tire_size,\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nDerivedColumn2 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tupdate_date\n\t),\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scdtype1and2df_copy2')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "tiresizecorscdinput",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink2"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Join1"
-						},
-						{
-							"name": "AlterRow1"
-						},
-						{
-							"name": "DerivedColumn1"
-						},
-						{
-							"name": "DerivedColumn2"
-						},
-						{
-							"name": "SurrogateKey1"
-						},
-						{
-							"name": "DerivedColumn4"
-						},
-						{
-							"name": "Lookup1"
-						}
-					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nLookup1 alterRow(insertIf(not(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))!=ltrim(rtrim(trim(lkp_Original_Size)))),\n\tupdateIf(not(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim({lkp_Original_Size}))))) ~> AlterRow1\nSurrogateKey1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y',\n\t\tSk_tire_size = Sk_tire_size+max_sk) ~> DerivedColumn1\nAlterRow1 derive(update_date = currentTimestamp()) ~> DerivedColumn2\nAlterRow1 keyGenerate(output(Sk_tire_size as long),\n\tstartAt: 1L) ~> SurrogateKey1\nJoin1 derive(join_cond = 1) ~> DerivedColumn4\nDerivedColumn4, source3 lookup(join_cond == join_key,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup1\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tmapColumn(\n\t\tSk_tire_size,\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nDerivedColumn2 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tupdate_date,\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size}\n\t),\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scdtype1and2df_stage1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "tiresizecorscdinput",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink2"
-						}
-					],
-					"transformations": [
-						{
-							"name": "AlterRow1"
-						},
-						{
-							"name": "DerivedColumn1"
-						},
-						{
-							"name": "DerivedColumn2"
-						}
-					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1 alterRow(insertIf(not(isNull({Original Size}))),\n\tupdateIf(not(isNull({Original Size})))) ~> AlterRow1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nAlterRow1 derive(update_date = currentTimestamp()) ~> DerivedColumn2\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nDerivedColumn2 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tupdate_date,\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size}\n\t),\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
+					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,\\nCorrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nJoin1 alterRow(insertIf(not(isNull({Original Size}))&&isNull(lkp_Original_Size)),\n\tupdateIf(not(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim({lkp_Original_Size})))&&ltrim(rtrim(trim({Corrected Size})))!=ltrim(rtrim(trim(coalesce(lkp_Corrected_Size,'0')))))) ~> AlterRow1\nConditionalSplit1@Insert derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nAlterRow1 split(not(isNull({Original Size}))&&(isNull(lkp_Original_Size)),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size))),\n\tdisjoint: false) ~> ConditionalSplit1@(Insert, Update, Other)\nConditionalSplit1@Update derive(update_date = currentTimestamp()) ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tCorrected_Size = {Corrected Size},\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
 				}
 			},
 			"dependsOn": [
@@ -4081,13 +3706,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
 						}
 					],
 					"sinks": [
@@ -4129,93 +3747,12 @@
 							"name": "AlterRow2"
 						}
 					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,Corrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nJoin1 split(not(isNull({Original Size}))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size)))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tdisjoint: true) ~> ConditionalSplit1@(Insert, Update)\nAlterRow2 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'N') ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nConditionalSplit1@Insert alterRow(insertIf(true())) ~> AlterRow1\nConditionalSplit1@Update alterRow(updateIf(true())) ~> AlterRow2\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
+					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,Corrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nJoin1 split(not(isNull({Original Size}))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size)))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tdisjoint: true) ~> ConditionalSplit1@(Insert, Update)\nAlterRow2 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'N') ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nConditionalSplit1@Insert alterRow(insertIf(true())) ~> AlterRow1\nConditionalSplit1@Update alterRow(updateIf(true())) ~> AlterRow2\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
 				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scdtype2only_copy1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "tiresizecorscdinput",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink2"
-						},
-						{
-							"dataset": {
-								"referenceName": "Parquet1",
-								"type": "DatasetReference"
-							},
-							"name": "sink3"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Join1"
-						},
-						{
-							"name": "DerivedColumn1"
-						},
-						{
-							"name": "ConditionalSplit1"
-						},
-						{
-							"name": "DerivedColumn5"
-						},
-						{
-							"name": "Select1"
-						},
-						{
-							"name": "AlterRow1"
-						},
-						{
-							"name": "AlterRow2"
-						},
-						{
-							"name": "Select2"
-						}
-					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,Corrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nJoin1 split(not(isNull({Original Size}))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size)))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tdisjoint: true) ~> ConditionalSplit1@(Insert, Update)\nAlterRow2 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'N') ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nConditionalSplit1@Insert alterRow(insertIf(true())) ~> AlterRow1\nConditionalSplit1@Update alterRow(updateIf(true())) ~> AlterRow2\nDerivedColumn1 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tcreate_date,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2\nSelect2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['insertfile'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tcreate_date,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tpartitionBy('hash', 1)) ~> sink3"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlSizecorrecscd')]",
-				"[concat(variables('factoryId'), '/datasets/Parquet1')]"
 			]
 		},
 		{
@@ -4237,54 +3774,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scdtype2only_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "scdtype2only_copy1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "scdtype2only_copy1",
-								"type": "DataFlowReference",
-								"parameters": {
-									"p1": "1"
-								},
-								"datasetParameters": {
-									"source1": {},
-									"source2": {},
-									"source3": {},
-									"sink2": {},
-									"sink3": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/scdtype2only_copy1')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/trigger12')]",

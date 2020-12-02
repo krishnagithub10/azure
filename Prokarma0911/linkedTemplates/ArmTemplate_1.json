@@ -6,68 +6,24 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "Prokarma0911"
+		},
+		"trigger11_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"eventtrig2_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
+		"eventtriggertry_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/sizecorr')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase2",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Original_Size",
-						"type": "varchar"
-					},
-					{
-						"name": "Corrected_Size",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "size_correction"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/speedcor')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase2",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Original_Speed_Rating",
-						"type": "varchar"
-					},
-					{
-						"name": "New_Speed_Rating",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "speed_rating"
-				}
-			},
-			"dependsOn": []
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/speeddeli')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -1898,67 +1854,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"wildcardFolderPath": "outputs/inputs2/",
-									"wildcardFileName": "*.parquet"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Parquet1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/sppedcopytodbf')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2312,40 +2207,6 @@
 					"script": "source(output(\n\t\t{SALE COUNTRY} as string,\n\t\tVEH_SOURCE as string,\n\t\t{IMPORT / DOMESTIC} as string,\n\t\t{Mnemonic Only} as string,\n\t\t{Vehicle Sales: Mnemonic - Vehicle/Country or MCODE} as string,\n\t\tTCODE as short,\n\t\t{Vehicle Sales: Sales Parent or GROUP} as string,\n\t\t{Vehicle Sales: Car/Truck or MACRO LEVEL SEGMENT} as string,\n\t\t{Vehicle Sales: Regional Sub-Segment or MODIFIED SEGMENT} as string,\n\t\t{Regional Segment  Concat or DRI SEGMENT} as string,\n\t\t{Vehicle Sales: Platform} as string,\n\t\t{Vehicle Sales: Brand} as string,\n\t\t{SOS Year or NALV MODEL NAME} as string,\n\t\t{Vehicle Sales: Nameplate or MODEL} as string,\n\t\tTRIM as string,\n\t\tElectric as string,\n\t\t{Vehicle Sales: Body Type or BODYSTYLE} as string,\n\t\tDOORS as short,\n\t\tDRIVETYPE as string,\n\t\t{LAST UPDATE} as date,\n\t\tSERIES as string,\n\t\tTYPE_F as string,\n\t\t{SECTION WIDTH} as short,\n\t\t{ASPECT RATIO} as double,\n\t\t{TYPE CONSTRUCTION} as string,\n\t\t{RIM DIAMETER} as short,\n\t\t{LOAD INDEX} as string,\n\t\t{SPEED SYMBOL} as string,\n\t\t{Previous Speed Symbol 0520} as string,\n\t\tFRONT_SIZE as string,\n\t\tCORE_F_SIZE as string,\n\t\t{CHECK INFO F TO B} as string,\n\t\tTYPE_R as string,\n\t\t{REAR SECTION WIDTH} as short,\n\t\t{REAR ASPECT RATIO} as double,\n\t\t{REAR TYPE CONSTRUCTION} as string,\n\t\t{REAR RIM DIAMETER} as short,\n\t\t{REAR LOAD INDEX} as string,\n\t\t{REAR SPEED SYMBOL} as string,\n\t\tREAR_SIZE as string,\n\t\tCORE_R_SIZE as string,\n\t\t{NEW SIZE AFTER 2015 / YEAR ADDED (FRT)} as string,\n\t\t{TIRE PARENT} as string,\n\t\tTIRE_BRAND as string,\n\t\tTIRE_MODEL as string,\n\t\t{Previous TIRE BRAND 0520} as string,\n\t\t{Previous TIRE MODEL 0520} as string,\n\t\t{Tire Category} as short,\n\t\t{Vehicle App} as short,\n\t\tSegment as string,\n\t\t{Reporting Segment} as string,\n\t\t{Tire Designation} as string,\n\t\t{Core 4} as string,\n\t\t{AS / SUM / WIN / LRR  APPLIES TO OEM MARKETING} as string,\n\t\tSIDEWALL as string,\n\t\t{WHEEL TYPE} as string,\n\t\t{RUN_FLAT DETAIL  (INTERNAL TO TIRE)} as string,\n\t\tPRES_MON as string,\n\t\tMON_SUPP as string,\n\t\t{SPARE DETAIL  (EXTERNAL TO TIRE)} as string,\n\t\t{1998_VVOL} as double,\n\t\t{1999_VVOL} as double,\n\t\t{2000_VVOL} as double,\n\t\t{2001_VVOL} as double,\n\t\t{2002_VVOL} as double,\n\t\t{2003_VVOL} as double,\n\t\t{2004_VVOL} as double,\n\t\t{2005_VVOL} as double,\n\t\t{2006_VVOL} as double,\n\t\t{2007_VVOL} as double,\n\t\t{2008_VVOL} as double,\n\t\t{2009_VVOL} as double,\n\t\t{2010_VVOL} as double,\n\t\t{2011_VVOL} as double,\n\t\t{2012_VVOL} as double,\n\t\t{2013_VVOL} as double,\n\t\t{2014_VVOL} as double,\n\t\t{2015_VVOL} as double,\n\t\t{2016_VVOL} as double,\n\t\t{2017_VVOL} as double,\n\t\t{2018_VVOL} as double,\n\t\t{2019_VVOL} as double,\n\t\t{2020_VVOL} as double,\n\t\t{2021_VVOL} as double,\n\t\t{2022_VVOL} as double,\n\t\t{2023_VVOL} as double,\n\t\t{2024_VVOL} as double,\n\t\t{2025_VVOL} as double,\n\t\t{1998_TVOL} as double,\n\t\t{1999_TVOL} as double,\n\t\t{2000_TVOL} as double,\n\t\t{2001_TVOL} as double,\n\t\t{2002_TVOL} as double,\n\t\t{2003_TVOL} as double,\n\t\t{2004_TVOL} as double,\n\t\t{2005_TVOL} as double,\n\t\t{2006_TVOL} as double,\n\t\t{2007_TVOL} as double,\n\t\t{2008_TVOL} as double,\n\t\t{2009_TVOL} as double,\n\t\t{2010_TVOL} as double,\n\t\t{2011_TVOL} as double,\n\t\t{2012_TVOL} as double,\n\t\t{2013_TVOL} as double,\n\t\t{2014_TVOL} as double,\n\t\t{2015_TVOL} as double,\n\t\t{2016_TVOL} as double,\n\t\t{2017_TVOL} as double,\n\t\t{2018_TVOL} as double,\n\t\t{2019_TVOL} as double,\n\t\t{2020_TVOL} as double,\n\t\t{2021_TVOL} as double,\n\t\t{2022_TVOL} as double,\n\t\t{2023_TVOL} as double,\n\t\t{2024_TVOL} as double,\n\t\t{2025_TVOL} as double,\n\t\t{Updated Segment} as string,\n\t\t{Updated Bodytype} as string,\n\t\t{Vehicle Sales: Regional Segment} as string,\n\t\t{Vehicle Sales: Regional Price Class} as string,\n\t\t{Global Sales Segment} as string,\n\t\t{Global Sales Sub-segment} as string,\n\t\t{Global Sales Price Class} as string,\n\t\t{Vehicle Sales: Program} as string,\n\t\t{RUN_FLAT SIMPL} as string,\n\t\t{SPARE TIRE SIMPL} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source11\nsource(output(\n\t\tOE_Tire_Size as string,\n\t\tLoad_Range as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> loadrange\nsource(output(\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> sizecor\nsource(output(\n\t\tOriginal_Speed_Rating as string,\n\t\tNew_Speed_Rating as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> speed\nsource11 select(mapColumn(\n\t\t{Vehicle Sale Country} = {SALE COUNTRY},\n\t\t{Vehicle Source Country} = VEH_SOURCE,\n\t\t{Vehicle Source Classification} = {IMPORT / DOMESTIC},\n\t\t{Markit code} = {Mnemonic Only},\n\t\tMCODE = {Vehicle Sales: Mnemonic - Vehicle/Country or MCODE},\n\t\tTCODE,\n\t\t{Vehicle Sales Parent} = {Vehicle Sales: Sales Parent or GROUP},\n\t\t{Vehicle Macro Segment} = {Vehicle Sales: Car/Truck or MACRO LEVEL SEGMENT},\n\t\t{Vehicle Sub-segment} = {Vehicle Sales: Regional Sub-Segment or MODIFIED SEGMENT},\n\t\t{Vehicle Micro Segment} = {Regional Segment  Concat or DRI SEGMENT},\n\t\t{Vehicle Platform} = {Vehicle Sales: Platform},\n\t\t{Vehicle Brand} = {Vehicle Sales: Brand},\n\t\t{Vehicle Model} = {Vehicle Sales: Nameplate or MODEL},\n\t\t{Vehicle Trim} = TRIM,\n\t\t{Vehicle Electric Indicator} = Electric,\n\t\t{Vehicle Body Style} = {Vehicle Sales: Body Type or BODYSTYLE},\n\t\t{Vehicle Number of Doors} = DOORS,\n\t\t{Vehicle Drive Type} = DRIVETYPE,\n\t\t{Vehicle Last Update} = {LAST UPDATE},\n\t\t{Vehicle Series} = SERIES,\n\t\t{Front Tire Prefix} = TYPE_F,\n\t\t{Front Tire Section Width} = {SECTION WIDTH},\n\t\t{Front Tire Aspect Ratio} = {ASPECT RATIO},\n\t\t{Front Tire Construction} = {TYPE CONSTRUCTION},\n\t\t{Front Tire Rim Diameter} = {RIM DIAMETER},\n\t\t{Front Tire Load Index} = {LOAD INDEX},\n\t\t{Front Tire Speed Rating} = {SPEED SYMBOL},\n\t\t{Total Front Size} = FRONT_SIZE,\n\t\t{Front Size} = CORE_F_SIZE,\n\t\t{Front vs Rear Tire Different} = {CHECK INFO F TO B},\n\t\t{Rear Tire Prefix} = TYPE_R,\n\t\t{Rear Tire Section Width} = {REAR SECTION WIDTH},\n\t\t{Rear Tire Aspect Ratio} = {REAR ASPECT RATIO},\n\t\t{Rear Tire Construction} = {REAR TYPE CONSTRUCTION},\n\t\t{Rear Tire Rim Diameter} = {REAR RIM DIAMETER},\n\t\t{Rear Load Index} = {REAR LOAD INDEX},\n\t\t{Rear Speed Rating} = {REAR SPEED SYMBOL},\n\t\t{Total Rear Size} = REAR_SIZE,\n\t\t{Rear Size} = CORE_R_SIZE,\n\t\t{Tire Parent} = {TIRE PARENT},\n\t\t{Tire Brand} = TIRE_BRAND,\n\t\t{Tire Model} = TIRE_MODEL,\n\t\t{RMA Tire Category} = {Tire Category},\n\t\t{RMA Vehicle App} = {Vehicle App},\n\t\t{RMA Segment} = Segment,\n\t\t{Reporting Segment},\n\t\t{Tire Designation},\n\t\t{Tire Application} = {AS / SUM / WIN / LRR  APPLIES TO OEM MARKETING},\n\t\t{Tire Sidewall} = SIDEWALL,\n\t\t{Wheel Type} = {WHEEL TYPE},\n\t\t{Tire Run Flat Technology} = {RUN_FLAT DETAIL  (INTERNAL TO TIRE)},\n\t\t{Tire Pressure Monitoring} = PRES_MON,\n\t\t{Supplier of Tire Pressure Monitoring} = MON_SUPP,\n\t\t{Spare Detail} = {SPARE DETAIL  (EXTERNAL TO TIRE)},\n\t\t{1998_VVOL},\n\t\t{1999_VVOL},\n\t\t{2000_VVOL},\n\t\t{2001_VVOL},\n\t\t{2002_VVOL},\n\t\t{2003_VVOL},\n\t\t{2004_VVOL},\n\t\t{2005_VVOL},\n\t\t{2006_VVOL},\n\t\t{2007_VVOL},\n\t\t{2008_VVOL},\n\t\t{2009_VVOL},\n\t\t{2010_VVOL},\n\t\t{2011_VVOL},\n\t\t{2012_VVOL},\n\t\t{2013_VVOL},\n\t\t{2014_VVOL},\n\t\t{2015_VVOL},\n\t\t{2016_VVOL},\n\t\t{2017_VVOL},\n\t\t{2018_VVOL},\n\t\t{2019_VVOL},\n\t\t{2020_VVOL},\n\t\t{2021_VVOL},\n\t\t{2022_VVOL},\n\t\t{2023_VVOL},\n\t\t{2024_VVOL},\n\t\t{2025_VVOL},\n\t\t{1998_TVOL},\n\t\t{1999_TVOL},\n\t\t{2000_TVOL},\n\t\t{2001_TVOL},\n\t\t{2002_TVOL},\n\t\t{2003_TVOL},\n\t\t{2004_TVOL},\n\t\t{2005_TVOL},\n\t\t{2006_TVOL},\n\t\t{2007_TVOL},\n\t\t{2008_TVOL},\n\t\t{2009_TVOL},\n\t\t{2010_TVOL},\n\t\t{2011_TVOL},\n\t\t{2012_TVOL},\n\t\t{2013_TVOL},\n\t\t{2014_TVOL},\n\t\t{2015_TVOL},\n\t\t{2016_TVOL},\n\t\t{2017_TVOL},\n\t\t{2018_TVOL},\n\t\t{2019_TVOL},\n\t\t{2020_TVOL},\n\t\t{2021_TVOL},\n\t\t{2022_TVOL},\n\t\t{2023_TVOL},\n\t\t{2024_TVOL},\n\t\t{2025_TVOL},\n\t\t{Vehicle Updated Segment} = {Updated Segment},\n\t\t{Vehicle Updated Bodytype} = {Updated Bodytype},\n\t\t{Vehicle Regional Segment} = {Vehicle Sales: Regional Segment},\n\t\t{Vehicle Regional Price Class} = {Vehicle Sales: Regional Price Class},\n\t\t{Vehicle Global Segment} = {Global Sales Segment},\n\t\t{Vehicle Global Subsegment} = {Global Sales Sub-segment},\n\t\t{Vehicle Global Price Class} = {Global Sales Price Class},\n\t\t{Vehicle Program} = {Vehicle Sales: Program},\n\t\t{Simple Run Flat Detail} = {RUN_FLAT SIMPL},\n\t\t{Simple Spare Detail} = {SPARE TIRE SIMPL}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 unpivot(output(\n\t\tName as string,\n\t\tValue as double\n\t),\n\tungroupBy({Vehicle Sale Country},\n\t\t{Vehicle Source Country},\n\t\t{Vehicle Source Classification},\n\t\t{Markit code},\n\t\tMCODE,\n\t\tTCODE,\n\t\t{Vehicle Sales Parent},\n\t\t{Vehicle Macro Segment},\n\t\t{Vehicle Sub-segment},\n\t\t{Vehicle Micro Segment},\n\t\t{Vehicle Platform},\n\t\t{Vehicle Brand},\n\t\t{Vehicle Model},\n\t\t{Vehicle Trim},\n\t\t{Vehicle Electric Indicator},\n\t\t{Vehicle Body Style},\n\t\t{Vehicle Number of Doors},\n\t\t{Vehicle Drive Type},\n\t\t{Vehicle Last Update},\n\t\t{Vehicle Series},\n\t\t{Front Tire Prefix},\n\t\t{Front Tire Section Width},\n\t\t{Front Tire Aspect Ratio},\n\t\t{Front Tire Construction},\n\t\t{Front Tire Rim Diameter},\n\t\t{Front Tire Load Index},\n\t\t{Front Tire Speed Rating},\n\t\t{Total Front Size},\n\t\t{Front Size},\n\t\t{Front vs Rear Tire Different},\n\t\t{Rear Tire Prefix},\n\t\t{Rear Tire Section Width},\n\t\t{Rear Tire Aspect Ratio},\n\t\t{Rear Tire Construction},\n\t\t{Rear Tire Rim Diameter},\n\t\t{Rear Load Index},\n\t\t{Rear Speed Rating},\n\t\t{Total Rear Size},\n\t\t{Rear Size},\n\t\t{Tire Parent},\n\t\t{Tire Brand},\n\t\t{Tire Model},\n\t\t{RMA Tire Category},\n\t\t{RMA Vehicle App},\n\t\t{RMA Segment},\n\t\t{Reporting Segment},\n\t\t{Tire Designation},\n\t\t{Tire Application},\n\t\t{Tire Sidewall},\n\t\t{Wheel Type},\n\t\t{Tire Run Flat Technology},\n\t\t{Tire Pressure Monitoring},\n\t\t{Supplier of Tire Pressure Monitoring},\n\t\t{Spare Detail},\n\t\t{Vehicle Updated Segment},\n\t\t{Vehicle Updated Bodytype},\n\t\t{Vehicle Regional Segment},\n\t\t{Vehicle Regional Price Class},\n\t\t{Vehicle Global Segment},\n\t\t{Vehicle Global Subsegment},\n\t\t{Vehicle Global Price Class},\n\t\t{Vehicle Program},\n\t\t{Simple Run Flat Detail},\n\t\t{Simple Spare Detail}),\n\tlateral: false,\n\tignoreNullPivots: false) ~> Unpivot1\nUnpivot1 derive(Value = iif(toString(Value) == 'X', 0, toInteger(Value)),\n\t\t{Vehicle Model Year} = left(Name,4),\n\t\t{Volume Type} = upper(substring(Name,6,4)),\n\t\t{Tire Volume} = iif(upper(substring(Name,6,4)) == 'TVOL', toInteger(Value), 0),\n\t\t{Vehicle Sales Volume} = iif(upper(substring(Name,6,4)) == 'VVOL',toInteger(Value), 0),\n\t\t{Tire Designation} = iif({Tire Designation} == 'Light Truck', 'LT', iif({Tire Designation} == 'Passenger Car', 'PCR', {Tire Designation}))) ~> DerivedColumn1\nDerivedColumn1 aggregate(groupBy({Vehicle Sale Country},\n\t\t{Vehicle Source Country},\n\t\t{Vehicle Source Classification},\n\t\t{Markit code},\n\t\tMCODE,\n\t\tTCODE,\n\t\t{Vehicle Sales Parent},\n\t\t{Vehicle Macro Segment},\n\t\t{Vehicle Sub-segment},\n\t\t{Vehicle Micro Segment},\n\t\t{Vehicle Platform},\n\t\t{Vehicle Brand},\n\t\t{Vehicle Model},\n\t\t{Vehicle Trim},\n\t\t{Vehicle Electric Indicator},\n\t\t{Vehicle Body Style},\n\t\t{Vehicle Number of Doors},\n\t\t{Vehicle Drive Type},\n\t\t{Vehicle Last Update},\n\t\t{Vehicle Series},\n\t\t{Front Tire Prefix},\n\t\t{Front Tire Section Width},\n\t\t{Front Tire Aspect Ratio},\n\t\t{Front Tire Construction},\n\t\t{Front Tire Rim Diameter},\n\t\t{Front Tire Load Index},\n\t\t{Front Tire Speed Rating},\n\t\t{Total Front Size},\n\t\t{Front Size},\n\t\t{Front vs Rear Tire Different},\n\t\t{Rear Tire Prefix},\n\t\t{Rear Tire Section Width},\n\t\t{Rear Tire Aspect Ratio},\n\t\t{Rear Tire Construction},\n\t\t{Rear Tire Rim Diameter},\n\t\t{Rear Load Index},\n\t\t{Rear Speed Rating},\n\t\t{Total Rear Size},\n\t\t{Rear Size},\n\t\t{Tire Parent},\n\t\t{Tire Brand},\n\t\t{Tire Model},\n\t\t{RMA Tire Category},\n\t\t{RMA Vehicle App},\n\t\t{RMA Segment},\n\t\t{Reporting Segment},\n\t\t{Tire Designation},\n\t\t{Tire Application},\n\t\t{Tire Sidewall},\n\t\t{Wheel Type},\n\t\t{Tire Run Flat Technology},\n\t\t{Tire Pressure Monitoring},\n\t\t{Supplier of Tire Pressure Monitoring},\n\t\t{Spare Detail},\n\t\t{Vehicle Updated Segment},\n\t\t{Vehicle Updated Bodytype},\n\t\t{Vehicle Regional Segment},\n\t\t{Vehicle Regional Price Class},\n\t\t{Vehicle Global Segment},\n\t\t{Vehicle Global Subsegment},\n\t\t{Vehicle Global Price Class},\n\t\t{Vehicle Program},\n\t\t{Simple Run Flat Detail},\n\t\t{Simple Spare Detail},\n\t\t{Vehicle Model Year}),\n\t{Tire Volume} = sum({Tire Volume}),\n\t\t{Vehicle Sales Volume} = sum({Vehicle Sales Volume})) ~> Aggregate1\nAggregate1 split(!({Tire Volume}==0&&{Vehicle Sales Volume}==0)&&{Simple Spare Detail}=='FULL',\n\t!({Tire Volume}==0&&{Vehicle Sales Volume}==0)&&{Simple Spare Detail}=='FULL',\n\t!({Tire Volume}==0&&{Vehicle Sales Volume}==0)&&{Simple Spare Detail}!='FULL',\n\tdisjoint: true) ~> ConditionalSplit1@(FullSpare, FullSpare2, NoFullSpare)\nConditionalSplit1@FullSpare select(mapColumn(\n\t\t{Vehicle Sale Country},\n\t\t{Vehicle Source Country},\n\t\t{Vehicle Source Classification},\n\t\t{Markit code},\n\t\tMCODE,\n\t\tTCODE,\n\t\t{Vehicle Sales Parent},\n\t\t{Vehicle Macro Segment},\n\t\t{Vehicle Sub-segment},\n\t\t{Vehicle Micro Segment},\n\t\t{Vehicle Platform},\n\t\t{Vehicle Brand},\n\t\t{Vehicle Model},\n\t\t{Vehicle Trim},\n\t\t{Vehicle Electric Indicator},\n\t\t{Vehicle Body Style},\n\t\t{Vehicle Number of Doors},\n\t\t{Vehicle Drive Type},\n\t\t{Vehicle Last Update},\n\t\t{Vehicle Series},\n\t\t{Tire Prefix} = {Front Tire Prefix},\n\t\t{Tire Section Width} = {Front Tire Section Width},\n\t\t{Tire Aspect Ratio} = {Front Tire Aspect Ratio},\n\t\t{Tire Construction} = {Front Tire Construction},\n\t\t{Tire Rim Diameter} = {Front Tire Rim Diameter},\n\t\t{Tire Load Index} = {Front Tire Load Index},\n\t\t{Tire Speed Rating} = {Front Tire Speed Rating},\n\t\t{Tire Total Size} = {Total Front Size},\n\t\t{Tire Size} = {Front Size},\n\t\t{Front vs Rear Tire Different},\n\t\t{Tire Parent},\n\t\t{Tire Brand},\n\t\t{Tire Model},\n\t\t{RMA Tire Category},\n\t\t{RMA Vehicle App},\n\t\t{RMA Segment},\n\t\t{Reporting Segment},\n\t\t{Tire Designation},\n\t\t{Tire Application},\n\t\t{Tire Sidewall},\n\t\t{Wheel Type},\n\t\t{Tire Run Flat Technology},\n\t\t{Tire Pressure Monitoring},\n\t\t{Supplier of Tire Pressure Monitoring},\n\t\t{Spare Detail},\n\t\t{Vehicle Updated Segment},\n\t\t{Vehicle Updated Bodytype},\n\t\t{Vehicle Regional Segment},\n\t\t{Vehicle Regional Price Class},\n\t\t{Vehicle Global Segment},\n\t\t{Vehicle Global Subsegment},\n\t\t{Vehicle Global Price Class},\n\t\t{Vehicle Program},\n\t\t{Simple Run Flat Detail},\n\t\t{Simple Spare Detail},\n\t\t{Vehicle Model Year},\n\t\t{Tire Volume},\n\t\t{Vehicle Sales Volume}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 derive({Tire Volume} = {Vehicle Sales Volume},\n\t\t{Vehicle Sales Volume} = 0,\n\t\t{Tire Position} = \"Full Spare\") ~> DerivedColumn2\nConditionalSplit1@FullSpare2 derive({Tire Volume} = {Tire Volume}-{Vehicle Sales Volume}) ~> DerivedColumn3\nConditionalSplit1@NoFullSpare, DerivedColumn3 union(byName: true)~> Union1\nUnion1 split(ltrim(rtrim(trim({Front vs Rear Tire Different})))=='Y',\n\tltrim(rtrim(trim({Front vs Rear Tire Different})))=='Y',\n\tdisjoint: true) ~> ConditionalSplit2@(Samefrontreartyre, Samefrontreartyre2, noystream)\nConditionalSplit2@Samefrontreartyre select(mapColumn(\n\t\t{Vehicle Sale Country},\n\t\t{Vehicle Source Country},\n\t\t{Vehicle Source Classification},\n\t\t{Markit code},\n\t\tMCODE,\n\t\tTCODE,\n\t\t{Vehicle Sales Parent},\n\t\t{Vehicle Macro Segment},\n\t\t{Vehicle Sub-segment},\n\t\t{Vehicle Micro Segment},\n\t\t{Vehicle Platform},\n\t\t{Vehicle Brand},\n\t\t{Vehicle Model},\n\t\t{Vehicle Trim},\n\t\t{Vehicle Electric Indicator},\n\t\t{Vehicle Body Style},\n\t\t{Vehicle Number of Doors},\n\t\t{Vehicle Drive Type},\n\t\t{Vehicle Last Update},\n\t\t{Vehicle Series},\n\t\t{Tire Prefix} = {Front Tire Prefix},\n\t\t{Tire Section Width} = {Front Tire Section Width},\n\t\t{Tire Aspect Ratio} = {Front Tire Aspect Ratio},\n\t\t{Tire Construction} = {Front Tire Construction},\n\t\t{Tire Rim Diameter} = {Front Tire Rim Diameter},\n\t\t{Tire Load Index} = {Front Tire Load Index},\n\t\t{Tire Speed Rating} = {Front Tire Speed Rating},\n\t\t{Tire Total Size} = {Total Front Size},\n\t\t{Tire Size} = {Front Size},\n\t\t{Front vs Rear Tire Different},\n\t\t{Tire Parent},\n\t\t{Tire Brand},\n\t\t{Tire Model},\n\t\t{RMA Tire Category},\n\t\t{RMA Vehicle App},\n\t\t{RMA Segment},\n\t\t{Reporting Segment},\n\t\t{Tire Designation},\n\t\t{Tire Application},\n\t\t{Tire Sidewall},\n\t\t{Wheel Type},\n\t\t{Tire Run Flat Technology},\n\t\t{Tire Pressure Monitoring},\n\t\t{Supplier of Tire Pressure Monitoring},\n\t\t{Spare Detail},\n\t\t{Vehicle Updated Segment},\n\t\t{Vehicle Updated Bodytype},\n\t\t{Vehicle Regional Segment},\n\t\t{Vehicle Regional Price Class},\n\t\t{Vehicle Global Segment},\n\t\t{Vehicle Global Subsegment},\n\t\t{Vehicle Global Price Class},\n\t\t{Vehicle Program},\n\t\t{Simple Run Flat Detail},\n\t\t{Simple Spare Detail},\n\t\t{Vehicle Model Year},\n\t\t{Tire Volume},\n\t\t{Vehicle Sales Volume}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select3\nSelect3 derive({Tire Volume} = {Vehicle Sales Volume} * 2,\n\t\t{Vehicle Sales Volume} = {Vehicle Sales Volume} / 2,\n\t\t{Tire Position} = \"Front\") ~> front\nConditionalSplit2@Samefrontreartyre2 select(mapColumn(\n\t\t{Vehicle Sale Country},\n\t\t{Vehicle Source Country},\n\t\t{Vehicle Source Classification},\n\t\t{Markit code},\n\t\tMCODE,\n\t\tTCODE,\n\t\t{Vehicle Sales Parent},\n\t\t{Vehicle Macro Segment},\n\t\t{Vehicle Sub-segment},\n\t\t{Vehicle Micro Segment},\n\t\t{Vehicle Platform},\n\t\t{Vehicle Brand},\n\t\t{Vehicle Model},\n\t\t{Vehicle Trim},\n\t\t{Vehicle Electric Indicator},\n\t\t{Vehicle Body Style},\n\t\t{Vehicle Number of Doors},\n\t\t{Vehicle Drive Type},\n\t\t{Vehicle Last Update},\n\t\t{Vehicle Series},\n\t\t{Front vs Rear Tire Different},\n\t\t{Tire Prefix} = {Rear Tire Prefix},\n\t\t{Tire Section Width} = {Rear Tire Section Width},\n\t\t{Tire Aspect Ratio} = {Rear Tire Aspect Ratio},\n\t\t{Tire Construction} = {Rear Tire Construction},\n\t\t{Tire Rim Diameter} = {Rear Tire Rim Diameter},\n\t\t{Tire Load Index} = {Rear Load Index},\n\t\t{Tire Speed Rating} = {Rear Speed Rating},\n\t\t{Tire Total Size} = {Total Rear Size},\n\t\t{Tire Size} = {Rear Size},\n\t\t{Tire Parent},\n\t\t{Tire Brand},\n\t\t{Tire Model},\n\t\t{RMA Tire Category},\n\t\t{RMA Vehicle App},\n\t\t{RMA Segment},\n\t\t{Reporting Segment},\n\t\t{Tire Designation},\n\t\t{Tire Application},\n\t\t{Tire Sidewall},\n\t\t{Wheel Type},\n\t\t{Tire Run Flat Technology},\n\t\t{Tire Pressure Monitoring},\n\t\t{Supplier of Tire Pressure Monitoring},\n\t\t{Spare Detail},\n\t\t{Vehicle Updated Segment},\n\t\t{Vehicle Updated Bodytype},\n\t\t{Vehicle Regional Segment},\n\t\t{Vehicle Regional Price Class},\n\t\t{Vehicle Global Segment},\n\t\t{Vehicle Global Subsegment},\n\t\t{Vehicle Global Price Class},\n\t\t{Vehicle Program},\n\t\t{Simple Run Flat Detail},\n\t\t{Simple Spare Detail},\n\t\t{Vehicle Model Year},\n\t\t{Tire Volume},\n\t\t{Vehicle Sales Volume}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select4\nSelect4 derive({Tire Volume} = {Tire Volume} - (2 * {Vehicle Sales Volume}),\n\t\t{Vehicle Sales Volume} = {Vehicle Sales Volume}/2,\n\t\t{Tire Position} = \"Rear\") ~> DerivedColumn5\nConditionalSplit2@noystream select(mapColumn(\n\t\t{Vehicle Sale Country},\n\t\t{Vehicle Source Country},\n\t\t{Vehicle Source Classification},\n\t\t{Markit code},\n\t\tMCODE,\n\t\tTCODE,\n\t\t{Vehicle Sales Parent},\n\t\t{Vehicle Macro Segment},\n\t\t{Vehicle Sub-segment},\n\t\t{Vehicle Micro Segment},\n\t\t{Vehicle Platform},\n\t\t{Vehicle Brand},\n\t\t{Vehicle Model},\n\t\t{Vehicle Trim},\n\t\t{Vehicle Electric Indicator},\n\t\t{Vehicle Body Style},\n\t\t{Vehicle Number of Doors},\n\t\t{Vehicle Drive Type},\n\t\t{Vehicle Last Update},\n\t\t{Vehicle Series},\n\t\t{Tire Prefix} = {Front Tire Prefix},\n\t\t{Tire Section Width} = {Front Tire Section Width},\n\t\t{Tire Aspect Ratio} = {Front Tire Aspect Ratio},\n\t\t{Tire Construction} = {Front Tire Construction},\n\t\t{Tire Rim Diameter} = {Front Tire Rim Diameter},\n\t\t{Tire Load Index} = {Front Tire Load Index},\n\t\t{Tire Speed Rating} = {Front Tire Speed Rating},\n\t\t{Tire Total Size} = {Total Front Size},\n\t\t{Tire Size} = {Front Size},\n\t\t{Front vs Rear Tire Different},\n\t\t{Tire Parent},\n\t\t{Tire Brand},\n\t\t{Tire Model},\n\t\t{RMA Tire Category},\n\t\t{RMA Vehicle App},\n\t\t{RMA Segment},\n\t\t{Reporting Segment},\n\t\t{Tire Designation},\n\t\t{Tire Application},\n\t\t{Tire Sidewall},\n\t\t{Wheel Type},\n\t\t{Tire Run Flat Technology},\n\t\t{Tire Pressure Monitoring},\n\t\t{Supplier of Tire Pressure Monitoring},\n\t\t{Spare Detail},\n\t\t{Vehicle Updated Segment},\n\t\t{Vehicle Updated Bodytype},\n\t\t{Vehicle Regional Segment},\n\t\t{Vehicle Regional Price Class},\n\t\t{Vehicle Global Segment},\n\t\t{Vehicle Global Subsegment},\n\t\t{Vehicle Global Price Class},\n\t\t{Vehicle Program},\n\t\t{Simple Run Flat Detail},\n\t\t{Simple Spare Detail},\n\t\t{Vehicle Model Year},\n\t\t{Tire Volume},\n\t\t{Vehicle Sales Volume}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select5\nSelect5 derive({Tire Position} = \"Front and Rear\") ~> DerivedColumn6\nDerivedColumn5, front, DerivedColumn2, DerivedColumn6 union(byName: true)~> Union2\nUnion2 derive({Timestamp of Data} = '26-11-2020',\n\t\t{Timestamp TimeZone} = 'EST',\n\t\t{Original Tire Load Index} = rtrim(ltrim({Tire Load Index})),\n\t\t{Tire Load Index} = trim(left(ltrim(rtrim(trim({Tire Load Index}, \"N/K\"))),3)),\n\t\t{Tire Size} = replace(replace({Tire Size}, \" \", \"\"),\"ZR\",\"R\"),\n\t\t{Tire Speed Rating} = iif((in([{Tire Speed Rating}], 'NA') || in([{Tire Speed Rating}], 'N/K') ) && (in([{Tire Prefix}], 'P') || in([{Tire Prefix}], 'LT') ||  in([{Tire Prefix}], '')), '0', {Tire Speed Rating}),\n\t\t{RMA Segment} = iif(in([{RMA Segment}], '6')|| in([{RMA Segment}], '7') || in([{RMA Segment}], '8')|| in([{RMA Segment}], '9'),'0'+ {RMA Segment},{RMA Segment})) ~> derived\nderived, speed lookup({Tire Speed Rating} == Original_Speed_Rating,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup1\nLookup1, sizecor lookup({Tire Size} == Original_Size,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup2\nLookup2 derive({Tire Size} = coalesce(Corrected_Size,Original_Size,{Tire Size}),\n\t\t{Tire Speed Rating} = coalesce(New_Speed_Rating,{Tire Speed Rating}),\n\t\t{Load Range} = case(right({Original Tire Load Index},3)=='STD','STD',right({Original Tire Load Index},2)=='XL','XL',in([right({Original Tire Load Index},1)], 'B')|| in([right({Original Tire Load Index},1)], 'C') || in([right({Original Tire Load Index},1)], 'D')|| in([right({Original Tire Load Index},1)], 'E')|| in([right({Original Tire Load Index},1)], 'F') || in([right({Original Tire Load Index},1)], 'G'),right({Original Tire Load Index},1),'tbd'),\n\t\tTIre_size_lookup = concat({Tire Prefix}, {Tire Size},' ',{Tire Load Index})) ~> DerivedColumn7\nDerivedColumn7 split({Load Range}=='tbd',\n\tdisjoint: false) ~> ConditionalSplit3@(Loadrangetbd, otherstream)\nConditionalSplit3@Loadrangetbd, loadrange join(TIre_size_lookup == OE_Tire_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nJoin1 select(mapColumn(\n\t\t{Vehicle Sale Country},\n\t\t{Vehicle Source Country},\n\t\t{Vehicle Source Classification},\n\t\t{Markit code},\n\t\tMCODE,\n\t\tTCODE,\n\t\t{Vehicle Sales Parent},\n\t\t{Vehicle Macro Segment},\n\t\t{Vehicle Sub-segment},\n\t\t{Vehicle Micro Segment},\n\t\t{Vehicle Platform},\n\t\t{Vehicle Brand},\n\t\t{Vehicle Model},\n\t\t{Vehicle Trim},\n\t\t{Vehicle Electric Indicator},\n\t\t{Vehicle Body Style},\n\t\t{Vehicle Number of Doors},\n\t\t{Vehicle Drive Type},\n\t\t{Vehicle Last Update},\n\t\t{Vehicle Series},\n\t\t{Front vs Rear Tire Different},\n\t\t{Tire Prefix},\n\t\t{Tire Section Width},\n\t\t{Tire Aspect Ratio},\n\t\t{Tire Construction},\n\t\t{Tire Rim Diameter},\n\t\t{Tire Load Index},\n\t\t{Tire Speed Rating},\n\t\t{Tire Total Size},\n\t\t{Tire Size},\n\t\t{Tire Parent},\n\t\t{Tire Brand},\n\t\t{Tire Model},\n\t\t{RMA Tire Category},\n\t\t{RMA Vehicle App},\n\t\t{RMA Segment},\n\t\t{Reporting Segment},\n\t\t{Tire Designation},\n\t\t{Tire Application},\n\t\t{Tire Sidewall},\n\t\t{Wheel Type},\n\t\t{Tire Run Flat Technology},\n\t\t{Tire Pressure Monitoring},\n\t\t{Supplier of Tire Pressure Monitoring},\n\t\t{Spare Detail},\n\t\t{Vehicle Updated Segment},\n\t\t{Vehicle Updated Bodytype},\n\t\t{Vehicle Regional Segment},\n\t\t{Vehicle Regional Price Class},\n\t\t{Vehicle Global Segment},\n\t\t{Vehicle Global Subsegment},\n\t\t{Vehicle Global Price Class},\n\t\t{Vehicle Program},\n\t\t{Simple Run Flat Detail},\n\t\t{Simple Spare Detail},\n\t\t{Vehicle Model Year},\n\t\t{Tire Volume},\n\t\t{Vehicle Sales Volume},\n\t\t{Tire Position},\n\t\t{Timestamp of Data},\n\t\t{Timestamp TimeZone},\n\t\t{Tire Load Range} = Load_Range\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select6\nConditionalSplit3@otherstream select(mapColumn(\n\t\t{Vehicle Sale Country},\n\t\t{Vehicle Source Country},\n\t\t{Vehicle Source Classification},\n\t\t{Markit code},\n\t\tMCODE,\n\t\tTCODE,\n\t\t{Vehicle Sales Parent},\n\t\t{Vehicle Macro Segment},\n\t\t{Vehicle Sub-segment},\n\t\t{Vehicle Micro Segment},\n\t\t{Vehicle Platform},\n\t\t{Vehicle Brand},\n\t\t{Vehicle Model},\n\t\t{Vehicle Trim},\n\t\t{Vehicle Electric Indicator},\n\t\t{Vehicle Body Style},\n\t\t{Vehicle Number of Doors},\n\t\t{Vehicle Drive Type},\n\t\t{Vehicle Last Update},\n\t\t{Vehicle Series},\n\t\t{Front vs Rear Tire Different},\n\t\t{Tire Prefix},\n\t\t{Tire Section Width},\n\t\t{Tire Aspect Ratio},\n\t\t{Tire Construction},\n\t\t{Tire Rim Diameter},\n\t\t{Tire Load Index},\n\t\t{Tire Speed Rating},\n\t\t{Tire Total Size},\n\t\t{Tire Size},\n\t\t{Tire Parent},\n\t\t{Tire Brand},\n\t\t{Tire Model},\n\t\t{RMA Tire Category},\n\t\t{RMA Vehicle App},\n\t\t{RMA Segment},\n\t\t{Reporting Segment},\n\t\t{Tire Designation},\n\t\t{Tire Application},\n\t\t{Tire Sidewall},\n\t\t{Wheel Type},\n\t\t{Tire Run Flat Technology},\n\t\t{Tire Pressure Monitoring},\n\t\t{Supplier of Tire Pressure Monitoring},\n\t\t{Spare Detail},\n\t\t{Vehicle Updated Segment},\n\t\t{Vehicle Updated Bodytype},\n\t\t{Vehicle Regional Segment},\n\t\t{Vehicle Regional Price Class},\n\t\t{Vehicle Global Segment},\n\t\t{Vehicle Global Subsegment},\n\t\t{Vehicle Global Price Class},\n\t\t{Vehicle Program},\n\t\t{Simple Run Flat Detail},\n\t\t{Simple Spare Detail},\n\t\t{Vehicle Model Year},\n\t\t{Tire Volume},\n\t\t{Vehicle Sales Volume},\n\t\t{Tire Position},\n\t\t{Timestamp of Data},\n\t\t{Timestamp TimeZone},\n\t\t{Tire Load Range} = {Load Range}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select7\nSelect6, Select7 union(byName: true)~> Union3\nUnion3 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> final"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/sizecorr')]",
-				"[concat(variables('factoryId'), '/datasets/speedcor')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/insertdf')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "Parquet1",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> source1\nsource1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1"
-				}
-			},
 			"dependsOn": []
 		},
 		{
@@ -2369,13 +2230,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
 						}
 					],
 					"sinks": [
@@ -2414,223 +2268,7 @@
 							"name": "Select1"
 						}
 					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,\\nCorrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nJoin1 alterRow(insertIf(not(isNull({Original Size}))&&isNull(lkp_Original_Size)),\n\tupdateIf(not(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim({lkp_Original_Size})))&&ltrim(rtrim(trim({Corrected Size})))!=ltrim(rtrim(trim(coalesce(lkp_Corrected_Size,'0')))))) ~> AlterRow1\nConditionalSplit1@Insert derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nAlterRow1 split(not(isNull({Original Size}))&&(isNull(lkp_Original_Size)),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size))),\n\tdisjoint: false) ~> ConditionalSplit1@(Insert, Update, Other)\nConditionalSplit1@Update derive(update_date = currentTimestamp()) ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tCorrected_Size = {Corrected Size},\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scdtype1and2df_copy1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "tiresizecorscdinput",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink2"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Join1"
-						},
-						{
-							"name": "AlterRow1"
-						},
-						{
-							"name": "DerivedColumn1"
-						},
-						{
-							"name": "DerivedColumn2"
-						},
-						{
-							"name": "SurrogateKey1"
-						},
-						{
-							"name": "DerivedColumn4"
-						},
-						{
-							"name": "Lookup1"
-						}
-					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nLookup1 alterRow(upsertIf(not(isNull({Original Size}))&&not(isNull(Original_Size)))) ~> AlterRow1\nSurrogateKey1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y',\n\t\tSk_tire_size = Sk_tire_size+max_sk) ~> DerivedColumn1\nAlterRow1 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn2\nAlterRow1 keyGenerate(output(Sk_tire_size as long),\n\tstartAt: 1L) ~> SurrogateKey1\nJoin1 derive(join_cond = 1) ~> DerivedColumn4\nDerivedColumn4, source3 lookup(join_cond == join_key,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup1\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tSk_tire_size,\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nDerivedColumn2 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tupdate_date\n\t),\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scdtype1and2df_copy2')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "tiresizecorscdinput",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink2"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Join1"
-						},
-						{
-							"name": "AlterRow1"
-						},
-						{
-							"name": "DerivedColumn1"
-						},
-						{
-							"name": "DerivedColumn2"
-						},
-						{
-							"name": "SurrogateKey1"
-						},
-						{
-							"name": "DerivedColumn4"
-						},
-						{
-							"name": "Lookup1"
-						}
-					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nLookup1 alterRow(insertIf(not(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))!=ltrim(rtrim(trim(lkp_Original_Size)))),\n\tupdateIf(not(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim({lkp_Original_Size}))))) ~> AlterRow1\nSurrogateKey1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y',\n\t\tSk_tire_size = Sk_tire_size+max_sk) ~> DerivedColumn1\nAlterRow1 derive(update_date = currentTimestamp()) ~> DerivedColumn2\nAlterRow1 keyGenerate(output(Sk_tire_size as long),\n\tstartAt: 1L) ~> SurrogateKey1\nJoin1 derive(join_cond = 1) ~> DerivedColumn4\nDerivedColumn4, source3 lookup(join_cond == join_key,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup1\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tmapColumn(\n\t\tSk_tire_size,\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nDerivedColumn2 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tupdate_date,\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size}\n\t),\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scdtype1and2df_stage1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "tiresizecorscdinput",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "sink2"
-						}
-					],
-					"transformations": [
-						{
-							"name": "AlterRow1"
-						},
-						{
-							"name": "DerivedColumn1"
-						},
-						{
-							"name": "DerivedColumn2"
-						}
-					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1 alterRow(insertIf(not(isNull({Original Size}))),\n\tupdateIf(not(isNull({Original Size})))) ~> AlterRow1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nAlterRow1 derive(update_date = currentTimestamp()) ~> DerivedColumn2\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nDerivedColumn2 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tupdate_date,\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size}\n\t),\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
+					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,\\nCorrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nJoin1 alterRow(insertIf(not(isNull({Original Size}))&&isNull(lkp_Original_Size)),\n\tupdateIf(not(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim({lkp_Original_Size})))&&ltrim(rtrim(trim({Corrected Size})))!=ltrim(rtrim(trim(coalesce(lkp_Corrected_Size,'0')))))) ~> AlterRow1\nConditionalSplit1@Insert derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nAlterRow1 split(not(isNull({Original Size}))&&(isNull(lkp_Original_Size)),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size))),\n\tdisjoint: false) ~> ConditionalSplit1@(Insert, Update, Other)\nConditionalSplit1@Update derive(update_date = currentTimestamp()) ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tCorrected_Size = {Corrected Size},\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
 				}
 			},
 			"dependsOn": [
@@ -2658,13 +2296,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "source2"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlSizecorrecscd",
-								"type": "DatasetReference"
-							},
-							"name": "source3"
 						}
 					],
 					"sinks": [
@@ -2706,11 +2337,327 @@
 							"name": "AlterRow2"
 						}
 					],
-					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,Corrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource(output(\n\t\tjoin_key as integer,\n\t\tmax_sk as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select 1 as join_key,coalesce(max(Sk_tire_size),0) as max_sk from tire_size_SCD',\n\tformat: 'query') ~> source3\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nJoin1 split(not(isNull({Original Size}))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size)))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tdisjoint: true) ~> ConditionalSplit1@(Insert, Update)\nAlterRow2 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'N') ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nConditionalSplit1@Insert alterRow(insertIf(true())) ~> AlterRow1\nConditionalSplit1@Update alterRow(updateIf(true())) ~> AlterRow2\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
+					"script": "parameters{\n\tp1 as integer (1)\n}\nsource(output(\n\t\t{Original Size} as string,\n\t\t{Corrected Size} as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tlkp_Original_Size as string,\n\t\tlkp_Corrected_Size as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select Original_Size as lkp_Original_Size ,Corrected_Size as lkp_Corrected_Size from dbo.tire_size_SCD',\n\tformat: 'query') ~> source2\nsource1, source2 join({Original Size} == lkp_Original_Size,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Join1\nAlterRow1 derive(create_date = currentTimestamp(),\n\t\tupdate_date = currentTimestamp(),\n\t\tchange_ind = 'Y') ~> DerivedColumn1\nJoin1 split(not(isNull({Original Size}))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tnot(isNull({Original Size}))&&not(isNull(lkp_Original_Size))&&ltrim(rtrim(trim({Original Size})))==ltrim(rtrim(trim(lkp_Original_Size)))&&trim(rtrim(ltrim({Corrected Size})))!=trim(rtrim(ltrim(coalesce(lkp_Corrected_Size,'0')))),\n\tdisjoint: true) ~> ConditionalSplit1@(Insert, Update)\nAlterRow2 derive(update_date = currentTimestamp(),\n\t\tchange_ind = 'N') ~> DerivedColumn5\nDerivedColumn5 select(mapColumn(\n\t\t{Original Size},\n\t\t{Corrected Size},\n\t\tOriginal_Size = lkp_Original_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nConditionalSplit1@Insert alterRow(insertIf(true())) ~> AlterRow1\nConditionalSplit1@Update alterRow(updateIf(true())) ~> AlterRow2\nDerivedColumn1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD OFF;'],\n\tpostSQLs:['SET IDENTITY_INSERT dbo.tire_size_SCD ON;'],\n\tmapColumn(\n\t\tOriginal_Size = {Original Size},\n\t\tCorrected_Size = {Corrected Size},\n\t\tchange_ind,\n\t\tcreate_date,\n\t\tupdate_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1\nSelect1 sink(input(\n\t\tSk_tire_size as integer,\n\t\tOriginal_Size as string,\n\t\tCorrected_Size as string,\n\t\tchange_ind as string,\n\t\tcreate_date as timestamp,\n\t\tupdate_date as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['Original_Size'],\n\tformat: 'table',\n\tmapColumn(\n\t\tOriginal_Size,\n\t\tupdate_date,\n\t\tchange_ind\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink2"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/tiresizecorscdinput')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/carspl')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "carsdf",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "folderpath",
+								"value": "@pipeline().parameters.foldernamepl"
+							},
+							{
+								"name": "filename",
+								"value": "@pipeline().parameters.filenamepl"
+							}
+						],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "carsdf",
+								"type": "DataFlowReference",
+								"parameters": {
+									"foldernamedf": {
+										"value": "'@{substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-11))\n\n}'",
+										"type": "Expression"
+									},
+									"filenamedf": {
+										"value": "'@{pipeline().parameters.filenamepl}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"source1": {
+										"foldernamedataset": {
+											"value": "@substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-11))\n",
+											"type": "Expression"
+										},
+										"filenamedataset": "@pipeline().parameters.filenamepl"
+									},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"parameters": {
+					"foldernamepl": {
+						"type": "string",
+						"defaultValue": "pkcontainer/inputs/Cars2"
+					},
+					"filenamepl": {
+						"type": "string",
+						"defaultValue": "cars18112020.txt"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/carsdf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1_Final')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "dataflow1_OE_Forecast",
+						"description": "hi",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1_OE_Forecast",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source11": {},
+									"loadrange": {},
+									"sizecor": {},
+									"speed": {},
+									"final": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow1_OE_Forecast')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype1-2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "scdtype1and2df",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "scdtype1and2df",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p1": "1"
+								},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/scdtype1and2df')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scdtype2only')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "scdtype2only",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "scdtype2only",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p1": "1"
+								},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/scdtype2only')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger11')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "tiresizecptodbf",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/LKPP/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger11_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/tiresizecptodbf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/eventtrig2')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/LKP/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('eventtrig2_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/eventtriggertry')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "tiresizecptodbf",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/LKP/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('eventtriggertry_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/tiresizecptodbf')]",
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
 			]
 		}
 	]

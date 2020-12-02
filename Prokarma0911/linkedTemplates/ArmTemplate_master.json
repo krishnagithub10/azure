@@ -128,6 +128,15 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"trigger11_properties_typeProperties_scope": {
+						"value": "[parameters('trigger11_properties_typeProperties_scope')]"
+					},
+					"eventtrig2_properties_typeProperties_scope": {
+						"value": "[parameters('eventtrig2_properties_typeProperties_scope')]"
+					},
+					"eventtriggertry_properties_typeProperties_scope": {
+						"value": "[parameters('eventtriggertry_properties_typeProperties_scope')]"
 					}
 				}
 			},
@@ -148,15 +157,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"trigger11_properties_typeProperties_scope": {
-						"value": "[parameters('trigger11_properties_typeProperties_scope')]"
-					},
-					"eventtrig2_properties_typeProperties_scope": {
-						"value": "[parameters('eventtrig2_properties_typeProperties_scope')]"
-					},
-					"eventtriggertry_properties_typeProperties_scope": {
-						"value": "[parameters('eventtriggertry_properties_typeProperties_scope')]"
 					},
 					"trigger12_properties_typeProperties_scope": {
 						"value": "[parameters('trigger12_properties_typeProperties_scope')]"
