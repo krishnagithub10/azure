@@ -10,7 +10,7 @@
 					"type": "PipelineReference"
 				},
 				"parameters": {
-					"foldernamepl": "substring({@triggerBody().folderPath},11,100)",
+					"foldernamepl": "substring(@{triggerBody().folderPath},11,100)",
 					"filenamepl": "@triggerBody().fileName"
 				}
 			}
