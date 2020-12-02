@@ -3,18 +3,7 @@
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Stopped",
-		"pipelines": [
-			{
-				"pipelineReference": {
-					"referenceName": "carspl",
-					"type": "PipelineReference"
-				},
-				"parameters": {
-					"foldernamepl": "@{triggerBody().folderPath}",
-					"filenamepl": "@triggerBody().fileName"
-				}
-			}
-		],
+		"pipelines": [],
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
 			"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars",
