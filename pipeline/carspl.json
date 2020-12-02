@@ -40,7 +40,7 @@
 						"datasetParameters": {
 							"source1": {
 								"foldernamedataset": {
-									"value": "@pipeline().parameters.foldernamepl",
+									"value": "@substring(pipeline().parameters.foldernamepl,11,100)",
 									"type": "Expression"
 								},
 								"filenamedataset": {
