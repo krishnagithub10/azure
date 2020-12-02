@@ -29,7 +29,7 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"foldernamedf": {
-								"value": "'@{substring(pipeline().parameters.foldernamepl,11,100)}'",
+								"value": "'@{substring(pipeline().parameters.foldernamepl,11,-1)}'",
 								"type": "Expression"
 							},
 							"filenamedf": {
