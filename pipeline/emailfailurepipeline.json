@@ -1,9 +1,9 @@
 {
-	"name": "failurepipeline",
+	"name": "emailfailurepipeline",
 	"properties": {
 		"activities": [
 			{
-				"name": "sendemailonfailure",
+				"name": "sendemailonfailurewebactivity",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
@@ -21,7 +21,7 @@
 						"content-type": "application/json"
 					},
 					"body": {
-						"value": "{\n\"DataFactoryName\":@(pipeline().DataFactory)\n\"EmailTo\":@(pipeline().parameters.EmailTo)\n\"ErrorMessage\":@(pipeline().parameters.ErrorMessage)\n\"PipelineName\":@(pipeline().Pipeline)\n\"Activity\":@(pipeline().parameters.Activity)\n \"Subject\":\"An Error has occurred at @(pipeline().Pipeline) pipeline\n}",
+						"value": "{\n\"DataFactoryName\"@(pipeline().DataFactory)\n\"EmailTo\"@(pipeline().parameters.EmailTo)\n\"ErrorMessage\"@(pipeline().parameters.ErrorMessage)\n\"PipelineName\"@(pipeline().Pipeline)\n\"Activity\"@(pipeline().parameters.Activity)\n \"Subject\"\"An Error has occurred at @(pipeline().Pipeline) pipeline\n}",
 						"type": "Expression"
 					}
 				}
@@ -29,13 +29,16 @@
 		],
 		"parameters": {
 			"EmailTo": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "\"vkchaitanyab2.kv@gmail.com\""
 			},
 			"ErrorMessage": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "\"hi\""
 			},
 			"Activity": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "\"web\""
 			}
 		},
 		"annotations": []
