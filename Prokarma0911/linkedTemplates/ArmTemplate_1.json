@@ -2444,18 +2444,18 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "failurepipeline",
+								"referenceName": "emailfailurepipeline",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
 							"parameters": {
-								"EmailTo": "vkchaitanyab2.kv@gmail.com",
+								"EmailTo": "\"vkchaitanyab2.kv@gmail.com\"",
 								"ErrorMessage": {
 									"value": "@activity('carsdf1').Error.Message",
 									"type": "Expression"
 								},
 								"Activity": {
-									"value": "'carsdf1'",
+									"value": "\"carsdf1\"",
 									"type": "Expression"
 								}
 							}

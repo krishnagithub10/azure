@@ -1727,18 +1727,18 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "failurepipeline",
+								"referenceName": "emailfailurepipeline",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
 							"parameters": {
-								"EmailTo": "vkchaitanyab2.kv@gmail.com",
+								"EmailTo": "\"vkchaitanyab2.kv@gmail.com\"",
 								"ErrorMessage": {
 									"value": "@activity('carsdf1').Error.Message",
 									"type": "Expression"
 								},
 								"Activity": {
-									"value": "'carsdf1'",
+									"value": "\"carsdf1\"",
 									"type": "Expression"
 								}
 							}
@@ -1759,7 +1759,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/carsdf')]",
-				"[concat(variables('factoryId'), '/pipelines/failurepipeline')]"
+				"[concat(variables('factoryId'), '/pipelines/emailfailurepipeline')]"
 			]
 		},
 		{
@@ -3871,13 +3871,13 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/failurepipeline')]",
+			"name": "[concat(parameters('factoryName'), '/emailfailurepipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "sendemailonfailure",
+						"name": "sendemailonfailurewebactivity",
 						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
@@ -3892,10 +3892,10 @@
 							"url": "https://prod-20.centralindia.logic.azure.com:443/workflows/ecd1850818fd4552830ff5b078b91ea8/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Rrj3z25DRus-0HbD5-4OsTt5y0sRUjq62nfk-dEYvYA",
 							"method": "POST",
 							"headers": {
-								"content-type": "application/json"
+								"Content-Type": "application/json"
 							},
 							"body": {
-								"value": "{\n\"DataFactoryName\":@(pipeline().DataFactory)\n\"EmailTo\":@(pipeline().parameters.EmailTo)\n\"ErrorMessage\":@(pipeline().parameters.ErrorMessage)\n\"PipelineName\":@(pipeline().Pipeline)\n\"Activity\":@(pipeline().parameters.Activity)\n \"Subject\":\"An Error has occurred at @(pipeline().Pipeline) pipeline\n}",
+								"value": "{\"EmailTo\":@{pipeline().parameters.EmailTo},\n\"Subject\":An error has occured in the @{pipeline().Pipeline}-pipeline,\n\"DataFactoryName\":@{pipeline().DataFactory},\n\"PipelineName\":@{pipeline().Pipeline},\n\"Activity\":@{pipeline().parameters.Activity},\n\"ErrorMessage\":@{pipeline().parameters.ErrorMessage}\n}",
 								"type": "Expression"
 							}
 						}
@@ -3903,13 +3903,16 @@
 				],
 				"parameters": {
 					"EmailTo": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "\"vkchaitanyab2.kv@gmail.com\""
 					},
 					"ErrorMessage": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "\"hi\""
 					},
 					"Activity": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "\"web\""
 					}
 				},
 				"annotations": []
