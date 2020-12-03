@@ -53,6 +53,37 @@
 					},
 					"traceLevel": "Fine"
 				}
+			},
+			{
+				"name": "faiurepipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "carsdf1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "failurepipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EmailTo": "vkchaitanyab2.kv@gmail.com",
+						"ErrorMessage": {
+							"value": "@activity('carsdf1').error.message",
+							"type": "Expression"
+						},
+						"Activity": {
+							"value": "'carsdf1'",
+							"type": "Expression"
+						}
+					}
+				}
 			}
 		],
 		"parameters": {
