@@ -35,15 +35,15 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
+		"eventtriggerexample_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
 		"eventtriggertry_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
 		"trigger11_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
-		},
-		"eventtriggerexample_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
@@ -134,9 +134,6 @@
 					},
 					"eventtrig2_properties_typeProperties_scope": {
 						"value": "[parameters('eventtrig2_properties_typeProperties_scope')]"
-					},
-					"eventtriggertry_properties_typeProperties_scope": {
-						"value": "[parameters('eventtriggertry_properties_typeProperties_scope')]"
 					}
 				}
 			},
@@ -157,6 +154,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"eventtriggertry_properties_typeProperties_scope": {
+						"value": "[parameters('eventtriggertry_properties_typeProperties_scope')]"
 					},
 					"trigger12_properties_typeProperties_scope": {
 						"value": "[parameters('trigger12_properties_typeProperties_scope')]"

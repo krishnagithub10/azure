@@ -35,15 +35,15 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
+		"eventtriggerexample_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
+		},
 		"eventtriggertry_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
 		"trigger11_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
-		},
-		"eventtriggerexample_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/72079db5-99a1-46b6-90b0-040a008b57db/resourceGroups/StorageAccountRG/providers/Microsoft.Storage/storageAccounts/storageacctpk0911"
 		},
@@ -1660,7 +1660,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "carsdf",
+						"name": "carsdf1",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1712,6 +1712,37 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "faiurepipeline",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "carsdf1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "failurepipeline",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EmailTo": "vkchaitanyab2.kv@gmail.com",
+								"ErrorMessage": {
+									"value": "@activity('carsdf1').error.message",
+									"type": "Expression"
+								},
+								"Activity": {
+									"value": "'carsdf1'",
+									"type": "Expression"
+								}
+							}
+						}
 					}
 				],
 				"parameters": {
@@ -1727,7 +1758,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/carsdf')]"
+				"[concat(variables('factoryId'), '/dataflows/carsdf')]",
+				"[concat(variables('factoryId'), '/pipelines/failurepipeline')]"
 			]
 		},
 		{
@@ -3370,6 +3402,26 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/eventtriggerexample')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('eventtriggerexample_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/eventtriggertry')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -3435,6 +3487,69 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/tiresizecptodbf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger12')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars2",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger12_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger13')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "carspl",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"foldernamepl": "[parameters('trigger13_properties_carspl_parameters_foldernamepl')]",
+							"filenamepl": "[parameters('trigger13_properties_carspl_parameters_filenamepl')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars2",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger13_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/carspl')]"
 			]
 		},
 		{
@@ -3756,87 +3871,50 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/eventtriggerexample')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
+			"name": "[concat(parameters('factoryName'), '/failurepipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('eventtriggerexample_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger12')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
+				"activities": [
 					{
-						"pipelineReference": {
-							"referenceName": "carspl",
-							"type": "PipelineReference"
+						"name": "sendemailonfailure",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
 						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars2",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('trigger12_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/carspl')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger13')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "carspl",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"foldernamepl": "[parameters('trigger13_properties_carspl_parameters_foldernamepl')]",
-							"filenamepl": "[parameters('trigger13_properties_carspl_parameters_filenamepl')]"
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-20.centralindia.logic.azure.com:443/workflows/ecd1850818fd4552830ff5b078b91ea8/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Rrj3z25DRus-0HbD5-4OsTt5y0sRUjq62nfk-dEYvYA",
+							"method": "POST",
+							"headers": {
+								"content-type": "application/json"
+							},
+							"body": {
+								"value": "{\n\"DataFactoryName\":@(pipeline().DataFactory)\n\"EmailTo\":@(pipeline().parameters.EmailTo)\n\"ErrorMessage\":@(pipeline().parameters.ErrorMessage)\n\"PipelineName\":@(pipeline().Pipeline)\n\"Activity\":@(pipeline().parameters.Activity)\n \"Subject\":\"An Error has occurred at @(pipeline().Pipeline) pipeline\n}",
+								"type": "Expression"
+							}
 						}
 					}
 				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/pkcontainer/blobs/inputs/Cars2",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('trigger13_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
+				"parameters": {
+					"EmailTo": {
+						"type": "string"
+					},
+					"ErrorMessage": {
+						"type": "string"
+					},
+					"Activity": {
+						"type": "string"
+					}
+				},
+				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/carspl')]"
-			]
+			"dependsOn": []
 		}
 	]
 }

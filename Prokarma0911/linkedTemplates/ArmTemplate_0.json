@@ -119,16 +119,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntimeselfhosted')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/eventtriggerexample')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -145,6 +135,62 @@
 						"Microsoft.Storage.BlobCreated"
 					]
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntimeselfhosted')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/failurepipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "sendemailonfailure",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-20.centralindia.logic.azure.com:443/workflows/ecd1850818fd4552830ff5b078b91ea8/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Rrj3z25DRus-0HbD5-4OsTt5y0sRUjq62nfk-dEYvYA",
+							"method": "POST",
+							"headers": {
+								"content-type": "application/json"
+							},
+							"body": {
+								"value": "{\n\"DataFactoryName\":@(pipeline().DataFactory)\n\"EmailTo\":@(pipeline().parameters.EmailTo)\n\"ErrorMessage\":@(pipeline().parameters.ErrorMessage)\n\"PipelineName\":@(pipeline().Pipeline)\n\"Activity\":@(pipeline().parameters.Activity)\n \"Subject\":\"An Error has occurred at @(pipeline().Pipeline) pipeline\n}",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"parameters": {
+					"EmailTo": {
+						"type": "string"
+					},
+					"ErrorMessage": {
+						"type": "string"
+					},
+					"Activity": {
+						"type": "string"
+					}
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -1048,36 +1094,6 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "size_correction"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase2')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/speedcor')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase2",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Original_Speed_Rating",
-						"type": "varchar"
-					},
-					{
-						"name": "New_Speed_Rating",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "speed_rating"
 				}
 			},
 			"dependsOn": [
