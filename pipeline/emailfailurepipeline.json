@@ -21,7 +21,7 @@
 						"Content-Type": "application/json"
 					},
 					"body": {
-						"value": "{“EmailTo”: @{pipeline().parameters.EmailTo},\n”Subject”: An error has occured in the @{pipeline().Pipeline}-pipeline\n}",
+						"value": "{\"EmailTo\": \"@{pipeline().parameters.EmailTo}\",\n\"Subject\": \"An error has occured in the @{pipeline().Pipeline}-pipeline\",\n\"DataFactoryName\":\"@{pipeline().DataFactory}\",\n\"PipelineName\":\"@{pipeline().Pipeline}\",\n\"Activity\":\"@{pipeline().parameters.Activity}\",\n\"ErrorMessage\":\"@{pipeline().parameters.ErrorMessage}\"\n}",
 						"type": "Expression"
 					}
 				}
