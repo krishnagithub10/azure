@@ -1734,7 +1734,7 @@
 							"parameters": {
 								"EmailTo": "vkchaitanyab2.kv@gmail.com",
 								"ErrorMessage": {
-									"value": "@activity('carsdf1').error.message",
+									"value": "@activity('carsdf1').Error.Message",
 									"type": "Expression"
 								},
 								"Activity": {
