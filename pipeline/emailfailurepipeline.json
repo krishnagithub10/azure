@@ -43,6 +43,12 @@
 			"SuccessMessage": {
 				"type": "string",
 				"defaultValue": "\"Success\""
+			},
+			"SourceCount": {
+				"type": "int"
+			},
+			"TargetCount": {
+				"type": "int"
 			}
 		},
 		"annotations": []
