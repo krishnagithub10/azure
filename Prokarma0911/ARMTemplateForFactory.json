@@ -1764,7 +1764,7 @@
 							},
 							"waitOnCompletion": true,
 							"parameters": {
-								"EmailTo": "\"vkchaitanyab2.kv@gmail.com;mgousiya@pkglobal.com\"",
+								"EmailTo": "\"vkchaitanyab2.kv@gmail.com\"",
 								"ErrorMessage": {
 									"value": "\"No Error Message\"",
 									"type": "Expression"
@@ -1775,6 +1775,14 @@
 								},
 								"SuccessMessage": {
 									"value": "@activity('carsdf1').output",
+									"type": "Expression"
+								},
+								"SourceCount": {
+									"value": "@activity('carsdf1').output.runStatus.metrics.sink1.stages[0]['streams']['source1']['count']",
+									"type": "Expression"
+								},
+								"TargetCount": {
+									"value": "@activity('carsdf1').output.runStatus.metrics.sink1.stages[0]['streams']['sink1']['count']",
 									"type": "Expression"
 								}
 							}
@@ -3931,7 +3939,7 @@
 								"Content-Type": "application/json"
 							},
 							"body": {
-								"value": "{\"EmailTo\":@{pipeline().parameters.EmailTo},\n\"Subject\":\"@{pipeline().Pipeline}\",\n\"DataFactoryName\":\"@{pipeline().DataFactory}\",\n\"PipelineName\":\"@{pipeline().Pipeline}\",\n\"Activity\":@{pipeline().parameters.Activity},\n\"ErrorMessage\":@{pipeline().parameters.ErrorMessage},\n\"SuccessMessage\":@{pipeline().parameters.SuccessMessage}\n}",
+								"value": "{\"EmailTo\":@{pipeline().parameters.EmailTo},\n\"Subject\":\"@{pipeline().Pipeline}\",\n\"DataFactoryName\":\"@{pipeline().DataFactory}\",\n\"PipelineName\":\"@{pipeline().Pipeline}\",\n\"Activity\":@{pipeline().parameters.Activity},\n\"ErrorMessage\":@{pipeline().parameters.ErrorMessage},\n\"SuccessMessage\":@{pipeline().parameters.SuccessMessage},\nSourceCount:@{pipeline().parameters.SourceCount},\nTargetCount:@{pipeline().parameters.TargetCount}\n}",
 								"type": "Expression"
 							}
 						}
@@ -3953,6 +3961,14 @@
 					"SuccessMessage": {
 						"type": "string",
 						"defaultValue": "\"Success\""
+					},
+					"SourceCount": {
+						"type": "int",
+						"defaultValue": 1
+					},
+					"TargetCount": {
+						"type": "int",
+						"defaultValue": 1
 					}
 				},
 				"annotations": []

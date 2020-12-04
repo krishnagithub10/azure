@@ -2481,7 +2481,7 @@
 							},
 							"waitOnCompletion": true,
 							"parameters": {
-								"EmailTo": "\"vkchaitanyab2.kv@gmail.com;mgousiya@pkglobal.com\"",
+								"EmailTo": "\"vkchaitanyab2.kv@gmail.com\"",
 								"ErrorMessage": {
 									"value": "\"No Error Message\"",
 									"type": "Expression"
@@ -2492,6 +2492,14 @@
 								},
 								"SuccessMessage": {
 									"value": "@activity('carsdf1').output",
+									"type": "Expression"
+								},
+								"SourceCount": {
+									"value": "@activity('carsdf1').output.runStatus.metrics.sink1.stages[0]['streams']['source1']['count']",
+									"type": "Expression"
+								},
+								"TargetCount": {
+									"value": "@activity('carsdf1').output.runStatus.metrics.sink1.stages[0]['streams']['sink1']['count']",
 									"type": "Expression"
 								}
 							}
