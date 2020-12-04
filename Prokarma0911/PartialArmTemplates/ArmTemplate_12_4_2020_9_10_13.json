@@ -1,0 +1,120 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "Prokarma0911"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/carspl')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "carsdf1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "folderpath",
+								"value": "@pipeline().parameters.foldernamepl"
+							},
+							{
+								"name": "filename",
+								"value": "@pipeline().parameters.filenamepl"
+							}
+						],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "carsdf",
+								"type": "DataFlowReference",
+								"parameters": {
+									"foldernamedf": {
+										"value": "'@{substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-11))\n\n}'",
+										"type": "Expression"
+									},
+									"filenamedf": {
+										"value": "'@{pipeline().parameters.filenamepl}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"source1": {
+										"foldernamedataset": {
+											"value": "@substring(pipeline().parameters.foldernamepl,11,add(length(pipeline().parameters.foldernamepl),-11))\n",
+											"type": "Expression"
+										},
+										"filenamedataset": "@pipeline().parameters.filenamepl"
+									}
+								}
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "faiurepipeline",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "carsdf1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "emailfailurepipeline",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EmailTo": "\"vkchaitanyab2.kv@gmail.com;mgousiya@pkglobal.com\"",
+								"ErrorMessage": {
+									"value": "@activity('carsdf1').Error.Message",
+									"type": "Expression"
+								},
+								"Activity": {
+									"value": "\"carsdf1\"",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"parameters": {
+					"foldernamepl": {
+						"type": "string",
+						"defaultValue": "pkcontainer/inputs/Cars2"
+					},
+					"filenamepl": {
+						"type": "string",
+						"defaultValue": "cars18112020.txt"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
