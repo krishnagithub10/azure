@@ -117,6 +117,10 @@
 						"SuccessMessage": {
 							"value": "@activity('carsdf1').output",
 							"type": "Expression"
+						},
+						"SourceCount": {
+							"value": "@activity('carsdf1').output.runStatus.metrics",
+							"type": "Expression"
 						}
 					}
 				}
