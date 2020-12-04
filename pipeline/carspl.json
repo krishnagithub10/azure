@@ -121,6 +121,10 @@
 						"SourceCount": {
 							"value": "@activity('carsdf1').output.runStatus.metrics.sink1.stages[0]['streams']['source1']['count']",
 							"type": "Expression"
+						},
+						"TargetCount": {
+							"value": "@activity('carsdf1').output.runStatus.metrics.sink1.stages[0]['streams']['sink1']['count']",
+							"type": "Expression"
 						}
 					}
 				}
