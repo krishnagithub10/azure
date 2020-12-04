@@ -119,7 +119,7 @@
 							"type": "Expression"
 						},
 						"SourceCount": {
-							"value": "@activity('carsdf1').output.runStatus.metrics",
+							"value": "@activity('carsdf1').output.runStatus.metrics.sink1[stages]",
 							"type": "Expression"
 						}
 					}
