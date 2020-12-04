@@ -2457,6 +2457,42 @@
 								"Activity": {
 									"value": "\"carsdf1\"",
 									"type": "Expression"
+								},
+								"SuccessMessage": "\"Not Successful\""
+							}
+						}
+					},
+					{
+						"name": "Successpipeline",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "carsdf1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "emailfailurepipeline",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EmailTo": "\"vkchaitanyab2.kv@gmail.com;mgousiya@pkglobal.com\"",
+								"ErrorMessage": {
+									"value": "@activity('carsdf1').Error.Message",
+									"type": "Expression"
+								},
+								"Activity": {
+									"value": "\"carsdf1\"",
+									"type": "Expression"
+								},
+								"SuccessMessage": {
+									"value": "@activity('carsdf1').output",
+									"type": "Expression"
 								}
 							}
 						}
